@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Dmitriy Kolotov](https://up.htmlacademy.ru/nodejs/2/user/87650).
-* Наставник: `Неизвестно`.
+* Наставник: [Николай Яшин](https://htmlacademy.ru/profile/id213763).
 
 ---
 
