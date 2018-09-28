@@ -1,22 +1,22 @@
 'use strict';
 
-const COMMANDS = {
-  version: `--version`,
-  help: `--help`
+const Command = {
+  VERSION: `--version`,
+  HELP: `--help`
 };
 
 const getOutputData = (command) => {
   switch (command) {
-    case COMMANDS.version:
+    case Command.VERSION:
       return {
         text: `v0.0.1.`,
         code: 0
       };
-    case COMMANDS.help:
+    case Command.HELP:
       return {
         text: `First CLI app. This app obeys your commands. Available commands:
-  --version - shows the version of the application
-  --help - shows available commands`,
+  ${Command.VERSION} - shows the version of the application
+  ${Command.HELP} - shows available commands`,
         code: 0
       };
     case undefined:
@@ -28,7 +28,7 @@ Author: Dmitriy Kolotov`,
     default:
       return {
         text: `Unknown command {{ ${command} }}
-To read the manual, type "--help"`,
+To read the manual, type "${Command.HELP}"`,
         code: 1
       };
   }
