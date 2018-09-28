@@ -1,0 +1,25 @@
+{
+  "name": "keksobooking",
+  "version": "0.0.1",
+  "description": "It's a project",
+  "main": "index.js",
+  "scripts": {
+    "test:lint": "eslint .",
+    "test": "npm run test:lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/binaryusr/87650-keksobooking.git"
+  },
+  "author": "binaryusr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/binaryusr/87650-keksobooking/issues"
+  },
+  "homepage": "https://github.com/binaryusr/87650-keksobooking#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "5.6.1",
+    "eslint-config-htmlacademy": "0.5.2"
+  }
+}

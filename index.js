@@ -34,11 +34,9 @@ To read the manual, type "${Command.HELP}"`,
   }
 };
 
-const writeDataToConsole = (outputData) => {
-  outputData.code === 0 ? console.log(outputData.text) : console.error(outputData.text);
-  process.exit(outputData.code);
-};
+const writeToConsole = (code) => code === 0 ? console.log : console.error;
 
 const args = process.argv.slice(2);
 const data = getOutputData(args[0]);
-writeDataToConsole(data);
+writeToConsole(data.code)(data.text);
+process.exit(data.code);
