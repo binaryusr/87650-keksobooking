@@ -1,12 +1,14 @@
 'use strict';
 
+const colors = require(`colors/safe`);
+
 const Command = require(`./command`);
 
 module.exports = {
   name: `unknown`,
   description: `Handles unknown command`,
   execute(command) {
-    throw new Error(`Unknown command {{ ${command} }}
-To read the manual, type "${Command.HELP}"`);
+    throw new Error(`Unknown command {{ ${colors.red(command)} }}
+To read the manual, type "${colors.green(Command.HELP)}"`);
   }
 };
