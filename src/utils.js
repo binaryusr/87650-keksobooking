@@ -25,9 +25,20 @@ const getSevenDaysBeforeNow = () => {
   return Date.now() - (SEVEN_DAYS * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND);
 };
 
+const isArrayOfUniqueElements = (array) => {
+  const set = new Set(array);
+  return set.size === array.length;
+};
+
+const isSubset = (superArray, subArray) => {
+  return [...subArray].every((element) => [...superArray].includes(element));
+};
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
   isInRangeInclusive,
-  getSevenDaysBeforeNow
+  getSevenDaysBeforeNow,
+  isArrayOfUniqueElements,
+  isSubset,
 };

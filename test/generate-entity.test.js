@@ -20,7 +20,12 @@ const {
   MIN_Y,
   MAX_Y,
 } = require(`../src/constants`);
-const {isInRangeInclusive, getSevenDaysBeforeNow} = require(`../src/utils`);
+const {
+  isInRangeInclusive,
+  getSevenDaysBeforeNow,
+  isArrayOfUniqueElements,
+  isSubset
+} = require(`../src/utils`);
 const entityGenerator = require(`../src/entity-generator`);
 
 const isAddressInRange = (address) => {
@@ -36,10 +41,9 @@ const isFeatureArrayLengthInRange = (features) => {
 };
 
 const isArrayOfAbsoluteLinks = (array) => {
-  const linkArray = array.filter((element) => {
+  return array.every((element) => {
     return element.includes(`http://`) || element.includes(`https://`);
   });
-  return array.length === linkArray.length;
 };
 
 describe(`Tests for generateEntity function`, () => {
@@ -96,8 +100,10 @@ describe(`Tests for generateEntity function`, () => {
     it(`should check if the check out time is one of the possible times`, () => {
       assert.strictEqual(CHECK_OUT.includes(offer.checkout), true);
     });
-    it(`should check if the features array's length is in the right range`, () => {
+    it(`should check if the features is an array of correct unique elements of the length in the right range`, () => {
       assert.strictEqual(isFeatureArrayLengthInRange(offer.features), true);
+      assert.strictEqual(isArrayOfUniqueElements(offer.features), true);
+      assert.strictEqual(isSubset(FEATURES, offer.features), true);
     });
     it(`should check if the description matches the correct description`, () => {
       assert.strictEqual(offer.description, DESCRIPTION);
