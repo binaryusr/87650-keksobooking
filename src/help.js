@@ -2,7 +2,7 @@
 
 const colors = require(`colors/safe`);
 
-const Command = require(`./command`);
+const {Command} = require(`./constants`);
 const version = require(`./version`);
 const author = require(`./author`);
 const license = require(`./license`);

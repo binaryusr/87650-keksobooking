@@ -1,6 +1,6 @@
 'use strict';
 
-const Command = require(`./command`);
+const {Command} = require(`./constants`);
 const version = require(`./version`);
 const help = require(`./help`);
 const author = require(`./author`);
