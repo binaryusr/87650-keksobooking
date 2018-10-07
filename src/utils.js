@@ -30,8 +30,8 @@ const isArrayOfUniqueElements = (array) => {
   return set.size === array.length;
 };
 
-const isSubset = (superArray, subArray) => {
-  return [...subArray].every((element) => [...superArray].includes(element));
+const isSubset = (superCollection, subCollection) => {
+  return [...subCollection].every((element) => [...superCollection].includes(element));
 };
 
 module.exports = {
