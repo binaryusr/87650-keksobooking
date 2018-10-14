@@ -24,6 +24,8 @@ const ask = (question) => new Promise((res) => rl.question(question, (resp) => r
 
 const openFile = util.promisify(fs.open);
 
+const writeFile = util.promisify(fs.writeFile);
+
 const runFileCreation = async () => {
   try {
     const userResp = await ask(Question.SHOULD_GENERATE);
@@ -42,8 +44,9 @@ const runFileCreation = async () => {
     } else if (err === Message.WRONG_TYPE_NUMBER) {
       console.log(Message.WRONG_TYPE_NUMBER);
       await runFileCreation();
+    } else {
+      throw new Error(err);
     }
-    throw new Error(err);
   }
 };
 
@@ -64,7 +67,7 @@ const createFile = async (path, numberOfEntities) => {
     await openFile(adjustedPath, `r`);
   } catch (err) {
     if (err && err.code === `ENOENT`) {
-      writeDataToFile(adjustedPath, data, `w`);
+      await writeDataToFile(adjustedPath, data, `w`);
       return;
     }
   }
@@ -75,23 +78,23 @@ const createFile = async (path, numberOfEntities) => {
     if (err === Message.LEAVE) {
       onExit(err);
     } else if (err === Message.WRONG_COMMAND) {
+      console.log(Message.WRONG_COMMAND);
       await createFile(adjustedPath, numberOfEntities);
     }
   }
-  writeDataToFile(adjustedPath, data, `w`);
-  process.exit(0);
+  await writeDataToFile(adjustedPath, data, `w`);
 };
 
 const generateData = (number) => [...Array(number)].map(() => generateEntity());
 
-const writeDataToFile = (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
+const writeDataToFile = async (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
   const dataStr = JSON.stringify(data);
   const fileWriteOptions = {encoding: `utf-8`, mode: 0o666, flag};
-  fs.writeFileSync(path, dataStr, fileWriteOptions, (err) => {
-    if (err) {
-      throw new Error(err);
-    }
-  });
+  try {
+    await writeFile(path, dataStr, fileWriteOptions);
+  } catch (err) {
+    throw new Error(err);
+  }
   console.log(`File has been successfully saved`);
   process.exit(0);
 };
@@ -99,12 +102,14 @@ const writeDataToFile = (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
 module.exports = {
   name: `no-command`,
   description: `Greets the user and suggests to generate data`,
-  execute() {
+  async execute() {
     console.log(`Hello user! This program will start the server of the "${colors.blue(`keksobooking`)}" app.
 ${colors.grey(`Author`)}: ${colors.green(packageInfo.author)}`);
-    runFileCreation().catch((err) => {
+    try {
+      await runFileCreation();
+    } catch (err) {
       console.error(err);
       process.exit(1);
-    });
+    }
   }
 };
