@@ -34,6 +34,16 @@ const isSubset = (superCollection, subCollection) => {
   return [...subCollection].every((element) => [...superCollection].includes(element));
 };
 
+const isYes = (resp) => resp.toLowerCase() === `yes` || resp.toLowerCase() === `y`;
+
+const isNo = (resp) => resp.toLowerCase() === `no` || resp.toLowerCase() === `n`;
+
+const isCorrectPrimitiveType = (value, type, errMessage) => {
+  if (typeof value !== type || isNaN(value)) {
+    throw errMessage;
+  }
+};
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -41,4 +51,7 @@ module.exports = {
   getSevenDaysBeforeNow,
   isArrayOfUniqueElements,
   isSubset,
+  isYes,
+  isNo,
+  isCorrectPrimitiveType
 };

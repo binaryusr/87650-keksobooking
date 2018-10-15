@@ -9,8 +9,23 @@ const Command = {
   NO_COMMAND: `no-command`,
 };
 
+const Question = {
+  SHOULD_GENERATE: `Do you want to generate data? (yes/y or no/n)> `,
+  ENTITIES_NUMBER: `How many entities do you want to generate?> `,
+  PATH: `Provide the path to the file and the file name> `,
+  ALREADY_EXISTS: `This file already exists. Do you want to overwrite this file?> `
+};
+
+const Message = {
+  LEAVE: `Thank you, buy!`,
+  WRONG_COMMAND: `Please type one of the following options: yes, y, no, n`,
+  WRONG_TYPE_NUMBER: `Please type a number!`
+};
+
 module.exports = {
   Command,
+  Question,
+  Message,
   TITLE: [
     `Большая уютная квартира`, `Маленькая неуютная квартира`, `Огромный прекрасный дворец`,
     `Маленький ужасный дворец`, `Красивый гостевой домик`, `Некрасивый негостеприимный домик`,
@@ -41,4 +56,5 @@ module.exports = {
   MINUTES_PER_HOUR: 60,
   HOURS_PER_DAY: 24,
   SEVEN_DAYS: 7,
+  ENTITY_FILE_DEFAULT_PATH: `${process.cwd()}/data.json`,
 };
