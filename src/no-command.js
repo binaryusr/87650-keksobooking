@@ -24,8 +24,6 @@ const ask = (question) => new Promise((res) => rl.question(question, (resp) => r
 
 const openFile = util.promisify(fs.open);
 
-const writeFile = util.promisify(fs.writeFile);
-
 const runFileCreation = async () => {
   try {
     const userResp = await ask(Question.SHOULD_GENERATE);
@@ -67,7 +65,7 @@ const createFile = async (path, numberOfEntities) => {
     await openFile(adjustedPath, `r`);
   } catch (err) {
     if (err && err.code === `ENOENT`) {
-      await writeDataToFile(adjustedPath, data, `w`);
+      writeDataToFile(adjustedPath, data, `w`);
       return;
     }
   }
@@ -82,21 +80,18 @@ const createFile = async (path, numberOfEntities) => {
       await createFile(adjustedPath, numberOfEntities);
     }
   }
-  await writeDataToFile(adjustedPath, data, `w`);
+  writeDataToFile(adjustedPath, data, `w`);
 };
 
 const generateData = (number) => [...Array(number)].map(() => generateEntity());
 
-const writeDataToFile = async (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
+const writeDataToFile = (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
   const dataStr = JSON.stringify(data);
   const fileWriteOptions = {encoding: `utf-8`, mode: 0o666, flag};
-  try {
-    await writeFile(path, dataStr, fileWriteOptions);
-  } catch (err) {
-    throw new Error(err);
-  }
-  console.log(`File has been successfully saved`);
-  process.exit(0);
+  fs.writeFile(path, dataStr, fileWriteOptions, () => {
+    console.log(`File has been successfully saved`);
+    rl.close();
+  });
 };
 
 module.exports = {
