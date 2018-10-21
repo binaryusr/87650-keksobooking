@@ -5,6 +5,7 @@ const Command = {
   HELP: `--help`,
   AUTHOR: `--author`,
   LICENSE: `--license`,
+  SERVER: `--server`,
   DESCRIPTION: `--description`,
   NO_COMMAND: `no-command`,
 };
@@ -22,10 +23,22 @@ const Message = {
   WRONG_TYPE_NUMBER: `Please type a number!`
 };
 
+const MIME_TYPE = {
+  '.html': `text/html; charset=UTF-8`,
+  '.css': `text/css`,
+  '.js': `text/javascript`,
+  '.svg': `image/svg+xml`,
+  '.png': `image/png`,
+  '.jpg': `image/jpeg`,
+  '.gif': `image/gif`,
+  '.ico': `image/x-icon`,
+};
+
 module.exports = {
   Command,
   Question,
   Message,
+  MIME_TYPE,
   TITLE: [
     `Большая уютная квартира`, `Маленькая неуютная квартира`, `Огромный прекрасный дворец`,
     `Маленький ужасный дворец`, `Красивый гостевой домик`, `Некрасивый негостеприимный домик`,
@@ -57,4 +70,6 @@ module.exports = {
   HOURS_PER_DAY: 24,
   SEVEN_DAYS: 7,
   ENTITY_FILE_DEFAULT_PATH: `${process.cwd()}/data.json`,
+  DEFAULT_PORT: 8080,
+  HOSTNAME: `127.0.0.1`,
 };
