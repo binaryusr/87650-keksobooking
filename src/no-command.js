@@ -10,17 +10,24 @@ const utils = require(`./utils`);
 const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`./constants`);
 const {generateEntity} = require(`./entity-generator`);
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+let rl;
+
+const getRl = () => {
+  if (typeof rl === `undefined`) {
+    rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+  }
+  return rl;
+};
 
 const onExit = (message) => {
   console.log(message);
   process.exit(0);
 };
 
-const ask = (question) => new Promise((res) => rl.question(question, (resp) => res(resp)));
+const ask = (question) => new Promise((res) => getRl().question(question, (resp) => res(resp)));
 
 const openFile = util.promisify(fs.open);
 
@@ -90,7 +97,7 @@ const writeDataToFile = (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
   const fileWriteOptions = {encoding: `utf-8`, mode: 0o666, flag};
   fs.writeFile(path, dataStr, fileWriteOptions, () => {
     console.log(`File has been successfully saved`);
-    rl.close();
+    getRl().close();
   });
 };
 
