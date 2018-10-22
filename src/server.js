@@ -20,19 +20,24 @@ const getValidPort = (typedArgs, defaultPort) => {
   return isPortValid ? customPort : defaultPort;
 };
 
+const getValidPathname = (pathname) => {
+  const sanitizedPathname = pathname.replace(`..`, ``);
+  const ext = path.extname(sanitizedPathname);
+  return ext ? sanitizedPathname : `/index.html`;
+};
+
 const onRequest = (req, res) => {
   const urlObj = url.parse(req.url);
-  const relativePath = path.join(process.cwd(), `static`, urlObj.pathname);
+  const validPathname = getValidPathname(urlObj.pathname);
+  const relativePath = path.join(process.cwd(), `static`, validPathname);
   const ext = path.extname(relativePath);
-
   fs.readFile(relativePath, (err, data) => {
-    if (err) {
-      res.statusCode = 500;
-      res.writeHead(500, `Internal server error`, {'Content-Type': `text/plain`});
+    if (err && err.code === `ENOENT`) {
+      res.statusCode = 404;
       res.end();
       return;
     }
-    if (err && err.code === `ENOENT`) {
+    if (err) {
       console.error(err);
       res.statusCode = 400;
       res.end(`Couldn't retrieve the requested data`);
