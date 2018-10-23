@@ -44,6 +44,10 @@ const isCorrectPrimitiveType = (value, type, errMessage) => {
   }
 };
 
+const makeAsync = (fn) => (req, res, next) => fn(req, res, next).catch(next);
+
+const generateData = (number, fn) => [...Array(number)].map(() => fn());
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -53,5 +57,7 @@ module.exports = {
   isSubset,
   isYes,
   isNo,
-  isCorrectPrimitiveType
+  isCorrectPrimitiveType,
+  makeAsync,
+  generateData,
 };
