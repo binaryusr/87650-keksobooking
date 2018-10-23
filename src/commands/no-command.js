@@ -5,10 +5,10 @@ const fs = require(`fs`);
 const readline = require(`readline`);
 const util = require(`util`);
 
-const packageInfo = require(`../package.json`);
-const utils = require(`./utils`);
-const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`./constants`);
-const generateEntity = require(`./generate-entity`);
+const packageInfo = require(`../../package.json`);
+const utils = require(`../utils`);
+const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`../constants`);
+const generateEntity = require(`../generate-entity`);
 
 let rl;
 
