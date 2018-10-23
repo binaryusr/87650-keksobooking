@@ -8,7 +8,7 @@ const util = require(`util`);
 const packageInfo = require(`../package.json`);
 const utils = require(`./utils`);
 const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`./constants`);
-const generateEntity = require(`./entity-generator`);
+const generateEntity = require(`./generate-entity`);
 
 let rl;
 

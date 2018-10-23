@@ -26,7 +26,7 @@ const {
   isArrayOfUniqueElements,
   isSubset
 } = require(`../src/utils`);
-const generateEntity = require(`../src/entity-generator`);
+const generateEntity = require(`../src/generate-entity`);
 
 const isAddressInRange = (address) => {
   const coordinatesArray = address.split(`,`);
