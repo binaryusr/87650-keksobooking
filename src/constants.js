@@ -27,6 +27,7 @@ const HttpCode = {
   BAD_REQUEST_CODE: 400,
   NOT_FOUND_CODE: 404,
   INTERNAL_SERVER_ERR_CODE: 500,
+  NOT_IMPLEMENTED: 501,
 };
 
 module.exports = {
@@ -67,4 +68,5 @@ module.exports = {
   ENTITY_FILE_DEFAULT_PATH: `${process.cwd()}/data.json`,
   DEFAULT_PORT: 8080,
   HOSTNAME: `127.0.0.1`,
+  DEFAULT_MAX_QUANTITY: 20,
 };
