@@ -23,18 +23,21 @@ describe(`GET /api/offers`, () => {
       .expect(200)
       .expect(`Content-Type`, /json/);
     assert.strictEqual(res.body.length, 5);
+    assert.strictEqual(isEachValueObject(res.body), true);
   });
   it(`should respond with maximum 20 objects in an array. "/api/offers?limit=40"`, async () => {
     const res = await request(app).get(`/api/offers?limit=40`).set(`Accept`, `application/json`)
       .expect(200)
       .expect(`Content-Type`, /json/);
     assert.strictEqual(res.body.length, 20);
+    assert.strictEqual(isEachValueObject(res.body), true);
   });
   it(`should respond with 5 objects in an array. "/api/offers?skip=0&limit=5"`, async () => {
     const res = await request(app).get(`/api/offers?limit=5`).set(`Accept`, `application/json`)
       .expect(200)
       .expect(`Content-Type`, /json/);
     assert.strictEqual(res.body.length, 5);
+    assert.strictEqual(isEachValueObject(res.body), true);
   });
   it(`should respond with 6 objects in an array starting from the 3rd. "/api/offers?skip=3&limit=6"`, async () => {
     const res = await request(app).get(`/api/offers?skip=3&limit=6`).set(`Accept`, `application/json`)
