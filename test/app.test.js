@@ -6,6 +6,10 @@ const assert = require(`assert`);
 const {DEFAULT_MAX_QUANTITY} = require(`../src/constants`);
 const app = require(`../src/app`);
 
+const isEachValueObject = (array) => {
+  return array.every((it) => typeof it === `object` && it !== null && Array.isArray(it) === false);
+};
+
 describe(`GET /api/offers`, () => {
   it(`should respond with a json array with ${DEFAULT_MAX_QUANTITY} entities. "/api/offers"`, async () => {
     const res = await request(app).get(`/api/offers`).set(`Accept`, `application/json`)
@@ -37,6 +41,7 @@ describe(`GET /api/offers`, () => {
       .expect(200)
       .expect(`Content-Type`, /json/);
     assert.strictEqual(res.body.length, 6);
+    assert.strictEqual(isEachValueObject(res.body), true);
   });
   it(`should respond with an object containing correct date param. "/api/offers/:date"`, async () => {
     const res = await request(app).get(`/api/offers/12345`).set(`Accept`, `application/json`)
