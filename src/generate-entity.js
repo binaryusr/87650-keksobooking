@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require(`./utils`);
-const constants = require(`./constants`);
+const constants = require(`./utils/constants`);
 
 const generateFeaturesArray = (featuresArray) => {
   const maxIndex = featuresArray.length - 1;

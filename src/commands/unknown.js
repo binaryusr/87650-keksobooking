@@ -2,7 +2,7 @@
 
 const colors = require(`colors/safe`);
 
-const {Command} = require(`../constants`);
+const {Command} = require(`../utils/constants`);
 
 module.exports = {
   name: `unknown`,

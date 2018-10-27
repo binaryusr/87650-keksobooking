@@ -3,7 +3,7 @@
 const request = require(`supertest`);
 const assert = require(`assert`);
 
-const {DEFAULT_MAX_QUANTITY} = require(`../src/constants`);
+const {DEFAULT_MAX_QUANTITY} = require(`../src/utils/constants`);
 const app = require(`../src/app`);
 
 const isEachValueObject = (array) => {

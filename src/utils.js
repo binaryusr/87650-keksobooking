@@ -6,7 +6,7 @@ const {
   MINUTES_PER_HOUR,
   HOURS_PER_DAY,
   SEVEN_DAYS
-} = require(`./constants`);
+} = require(`./utils/constants`);
 
 const getRandomElement = (elementArray) => {
   const index = Math.floor(Math.random() * Math.floor(elementArray.length));

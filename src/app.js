@@ -3,7 +3,7 @@
 const express = require(`express`);
 
 const {offersRouter} = require(`./routers`);
-const {NOT_FOUND_HANDLER, ERROR_HANDLER} = require(`./constants`);
+const {NOT_FOUND_HANDLER, ERROR_HANDLER} = require(`./utils/constants`);
 
 const app = express();
 
