@@ -20,6 +20,7 @@ const generateEntity = () => {
   const location = generateCoordinates();
   return {
     "author": {
+      "name": `Anna Bolina`,
       "avatar": `https://robohash.org/ai`,
     },
     "offer": {

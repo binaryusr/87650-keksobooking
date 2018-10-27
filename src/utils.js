@@ -48,6 +48,27 @@ const makeAsync = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 const generateData = (number, fn) => [...Array(number)].map(() => fn());
 
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.code = 404;
+  }
+}
+
+class IllegalArgumentError extends Error {
+  constructor(message) {
+    super(message);
+    this.code = 400;
+  }
+}
+
+class NotImplementedError extends Error {
+  constructor(message) {
+    super(message);
+    this.code = 501;
+  }
+}
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -60,4 +81,7 @@ module.exports = {
   isCorrectPrimitiveType,
   makeAsync,
   generateData,
+  NotFoundError,
+  IllegalArgumentError,
+  NotImplementedError
 };
