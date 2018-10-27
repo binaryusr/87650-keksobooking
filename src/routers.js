@@ -5,7 +5,7 @@ const multer = require(`multer`);
 
 const generateEntity = require(`./generate-entity`);
 const {DEFAULT_MAX_QUANTITY} = require(`./utils/constants`);
-const {makeAsync, generateData} = require(`./utils`);
+const {makeAsync, generateData} = require(`./utils/utils`);
 const {NotFoundError, IllegalArgumentError, NotImplementedError} = require(`./utils/errors`);
 
 const offersRouter = new express.Router();

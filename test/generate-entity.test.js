@@ -25,7 +25,7 @@ const {
   getSevenDaysBeforeNow,
   isArrayOfUniqueElements,
   isSubset
-} = require(`../src/utils`);
+} = require(`../src/utils/utils`);
 const generateEntity = require(`../src/generate-entity`);
 
 const isAddressInRange = (address) => {
