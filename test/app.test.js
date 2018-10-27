@@ -45,15 +45,17 @@ describe(`GET /api/offers`, () => {
       .expect(`Content-Type`, /json/);
     assert.strictEqual(res.body.length, 6);
     assert.strictEqual(isEachValueObject(res.body), true);
+    assert.strictEqual(res.body[0].date, 444);
+    assert.strictEqual(res.body[5].date, 999);
   });
   it(`should respond with an object containing correct date param. "/api/offers/:date"`, async () => {
-    const res = await request(app).get(`/api/offers/12345`).set(`Accept`, `application/json`)
+    const res = await request(app).get(`/api/offers/111`).set(`Accept`, `application/json`)
       .expect(200)
       .expect(`Content-Type`, /json/);
     assert.strictEqual(typeof res.body, `object`);
     assert.strictEqual(Array.isArray(res.body), false);
     assert.notStrictEqual(res.body, null);
-    assert.strictEqual(res.body.date, 12345);
+    assert.strictEqual(res.body.date, 111);
   });
   it(`should respond with the 404 by invalid pathname. "/api/blahblah"`, async () => {
     await request(app).get(`/api/blahblah`).set(`Accept`, `application/json`)

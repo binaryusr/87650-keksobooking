@@ -1,5 +1,4 @@
 'use strict';
-// create an instance of the router
 
 const express = require(`express`);
 
@@ -10,7 +9,15 @@ const {makeAsync, generateData} = require(`./utils`);
 const offersRouter = new express.Router();
 
 const entities = generateData(DEFAULT_MAX_QUANTITY, generateEntity);
-entities[0].date = 12345;
+entities[0].date = 111;
+entities[1].date = 222;
+entities[2].date = 333;
+entities[3].date = 444;
+entities[4].date = 555;
+entities[5].date = 666;
+entities[6].date = 777;
+entities[7].date = 888;
+entities[8].date = 999;
 
 offersRouter.get(``, makeAsync(async (req, res) => {
   const skip = parseInt(req.query.skip, 10) || 0;
