@@ -26,7 +26,7 @@ const {
   isArrayOfUniqueElements,
   isSubset
 } = require(`../src/utils`);
-const entityGenerator = require(`../src/entity-generator`);
+const generateEntity = require(`../src/generate-entity`);
 
 const isAddressInRange = (address) => {
   const coordinatesArray = address.split(`,`);
@@ -47,7 +47,7 @@ const isArrayOfAbsoluteLinks = (array) => {
 };
 
 describe(`Tests for generateEntity function`, () => {
-  const entity = entityGenerator.generateEntity();
+  const entity = generateEntity();
   const {author, offer, location, date} = entity;
   describe(`Type checking`, () => {
     it(`should check if generated entity is an object`, () => {

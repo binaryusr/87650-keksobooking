@@ -5,10 +5,10 @@ const fs = require(`fs`);
 const readline = require(`readline`);
 const util = require(`util`);
 
-const packageInfo = require(`../package.json`);
-const utils = require(`./utils`);
-const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`./constants`);
-const {generateEntity} = require(`./entity-generator`);
+const packageInfo = require(`../../package.json`);
+const utils = require(`../utils`);
+const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`../constants`);
+const generateEntity = require(`../generate-entity`);
 
 let rl;
 
@@ -65,9 +65,9 @@ const onUserResponse = (userResp) => {
   }
 };
 
-const createFile = async (path, numberOfEntities) => {
+const createFile = async (path, quantity) => {
   const adjustedPath = path ? path : ENTITY_FILE_DEFAULT_PATH;
-  const data = generateData(numberOfEntities);
+  const data = utils.generateData(quantity, generateEntity);
   try {
     await openFile(adjustedPath, `r`);
   } catch (err) {
@@ -84,13 +84,11 @@ const createFile = async (path, numberOfEntities) => {
       onExit(err);
     } else if (err === Message.WRONG_COMMAND) {
       console.log(Message.WRONG_COMMAND);
-      await createFile(adjustedPath, numberOfEntities);
+      await createFile(adjustedPath, quantity);
     }
   }
   writeDataToFile(adjustedPath, data, `w`);
 };
-
-const generateData = (number) => [...Array(number)].map(() => generateEntity());
 
 const writeDataToFile = (path = ENTITY_FILE_DEFAULT_PATH, data, flag) => {
   const dataStr = JSON.stringify(data);

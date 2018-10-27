@@ -1,14 +1,14 @@
 'use strict';
 
 const {Command} = require(`./constants`);
-const version = require(`./version`);
-const help = require(`./help`);
-const author = require(`./author`);
-const license = require(`./license`);
-const description = require(`./description`);
-const server = require(`./server`);
-const noCommand = require(`./no-command`);
-const unknown = require(`./unknown`);
+const version = require(`./commands/version`);
+const help = require(`./commands/help`);
+const author = require(`./commands/author`);
+const license = require(`./commands/license`);
+const description = require(`./commands/description`);
+const server = require(`./commands/server`);
+const noCommand = require(`./commands/no-command`);
+const unknown = require(`./commands/unknown`);
 
 module.exports = (command = Command.NO_COMMAND) => {
   const Execute = {

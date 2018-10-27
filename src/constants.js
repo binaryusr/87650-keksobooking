@@ -23,22 +23,18 @@ const Message = {
   WRONG_TYPE_NUMBER: `Please type a number!`
 };
 
-const MIME_TYPE = {
-  '.html': `text/html; charset=UTF-8`,
-  '.css': `text/css`,
-  '.js': `text/javascript`,
-  '.svg': `image/svg+xml`,
-  '.png': `image/png`,
-  '.jpg': `image/jpeg`,
-  '.gif': `image/gif`,
-  '.ico': `image/x-icon`,
+const HttpCode = {
+  BAD_REQUEST_CODE: 400,
+  NOT_FOUND_CODE: 404,
+  INTERNAL_SERVER_ERR_CODE: 500,
+  NOT_IMPLEMENTED: 501,
 };
 
 module.exports = {
   Command,
   Question,
   Message,
-  MIME_TYPE,
+  HttpCode,
   TITLE: [
     `Большая уютная квартира`, `Маленькая неуютная квартира`, `Огромный прекрасный дворец`,
     `Маленький ужасный дворец`, `Красивый гостевой домик`, `Некрасивый негостеприимный домик`,
@@ -72,4 +68,5 @@ module.exports = {
   ENTITY_FILE_DEFAULT_PATH: `${process.cwd()}/data.json`,
   DEFAULT_PORT: 8080,
   HOSTNAME: `127.0.0.1`,
+  DEFAULT_MAX_QUANTITY: 20,
 };
