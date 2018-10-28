@@ -1,7 +1,7 @@
 'use strict';
 
-const utils = require(`./utils`);
-const constants = require(`./constants`);
+const utils = require(`./utils/utils`);
+const constants = require(`./utils/constants`);
 
 const generateFeaturesArray = (featuresArray) => {
   const maxIndex = featuresArray.length - 1;
@@ -20,6 +20,7 @@ const generateEntity = () => {
   const location = generateCoordinates();
   return {
     "author": {
+      "name": `Anna Bolina`,
       "avatar": `https://robohash.org/ai`,
     },
     "offer": {

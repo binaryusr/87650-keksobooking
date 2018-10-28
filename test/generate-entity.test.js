@@ -19,13 +19,13 @@ const {
   MAX_X,
   MIN_Y,
   MAX_Y,
-} = require(`../src/constants`);
+} = require(`../src/utils/constants`);
 const {
   isInRangeInclusive,
   getSevenDaysBeforeNow,
   isArrayOfUniqueElements,
   isSubset
-} = require(`../src/utils`);
+} = require(`../src/utils/utils`);
 const generateEntity = require(`../src/generate-entity`);
 
 const isAddressInRange = (address) => {

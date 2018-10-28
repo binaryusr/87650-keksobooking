@@ -3,17 +3,29 @@
 const request = require(`supertest`);
 const assert = require(`assert`);
 
-const {DEFAULT_MAX_QUANTITY} = require(`../src/constants`);
+const {DEFAULT_MAX_QUANTITY} = require(`../src/utils/constants`);
 const app = require(`../src/app`);
 
 const isEachValueObject = (array) => {
   return array.every((it) => typeof it === `object` && it !== null && Array.isArray(it) === false);
 };
 
+const generateTestEntity = () => ({
+  "author": {
+    "name": `John Hurt`,
+    "avatar": `test/fixtures/keks.png`
+  },
+  "title": `Большая уютная квартира`,
+  "price": 500,
+  "rooms": 4,
+});
+
 describe(`GET /api/offers`, () => {
   describe(`success codes`, () => {
     it(`should respond with a json array with ${DEFAULT_MAX_QUANTITY} entities. "/api/offers"`, async () => {
-      const res = await request(app).get(`/api/offers`).set(`Accept`, `application/json`)
+      const res = await request(app)
+        .get(`/api/offers`)
+        .set(`Accept`, `application/json`)
         .expect(200)
         .expect(`Content-Type`, /json/);
       assert.strictEqual(Array.isArray(res.body), true);
@@ -89,5 +101,30 @@ describe(`GET /api/offers`, () => {
         .expect(501)
         .expect(`Content-Type`, /text\/html/);
     });
+  });
+});
+
+describe(`POST /api/offers`, () => {
+  const entity = generateTestEntity();
+  it(`should respond to application/json format by default with application/json`, async () => {
+    const res = await request(app)
+      .post(`/api/offers`)
+      .send(entity)
+      .set(`Accept`, `application/json`)
+      .expect(200)
+      .expect(`Content-Type`, /json/);
+    assert.deepStrictEqual(res.body, entity);
+  });
+  it(`should respond to multipart/form-data with application/json format`, async () => {
+    const res = await request(app)
+      .post(`/api/offers`)
+      .field(`name`, `John Hurt`)
+      .field(`price`, 500)
+      .attach(`avatar`, `test/fixtures/keks.png`)
+      .set(`Accept`, `application/json`)
+      .set(`Content-Type`, `multipart/form-data`)
+      .expect(200)
+      .expect(`Content-Type`, /json/);
+    assert.deepStrictEqual(res.body, {name: entity.author.name, price: `${entity.price}`, avatar: `keks.png`});
   });
 });

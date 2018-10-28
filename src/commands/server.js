@@ -3,7 +3,7 @@
 const colors = require(`colors/safe`);
 
 const app = require(`../app`);
-const {Command, DEFAULT_PORT, HOSTNAME} = require(`../constants`);
+const {Command, DEFAULT_PORT, HOSTNAME} = require(`../utils/constants`);
 
 const getValidPort = (typedArgs, defaultPort) => {
   const customPort = typedArgs.reduce((acc, it, i) => {
