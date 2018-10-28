@@ -23,19 +23,10 @@ const Message = {
   WRONG_TYPE_NUMBER: `Please type a number!`
 };
 
-const ERROR_HANDLER = (err, req, res, _next) => {
-  if (err) {
-    console.error(err.stack);
-    res.status(err.code || 500).send(err.message);
-  }
-};
-
 module.exports = {
   Command,
   Question,
   Message,
-  NOT_FOUND_HANDLER: (req, res) => res.status(404).send(`Page was not found`),
-  ERROR_HANDLER,
   TITLE: [
     `Большая уютная квартира`, `Маленькая неуютная квартира`, `Огромный прекрасный дворец`,
     `Маленький ужасный дворец`, `Красивый гостевой домик`, `Некрасивый негостеприимный домик`,
