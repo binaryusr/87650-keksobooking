@@ -6,8 +6,6 @@ const {offersRouter} = require(`./routers`);
 
 const app = express();
 
-const notFoundHandler = (req, res) => res.status(404).send(`Page was not found`);
-
 const errorHandler = (err, req, res, _next) => {
   if (err) {
     console.error(err.stack);
@@ -18,8 +16,6 @@ const errorHandler = (err, req, res, _next) => {
 app.use(express.static(`${process.cwd()}/static`));
 
 app.use(`/api/offers`, offersRouter);
-
-app.use(notFoundHandler);
 
 app.use(errorHandler);
 
