@@ -48,6 +48,12 @@ const makeAsync = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 const generateData = (number, fn) => [...Array(number)].map(() => fn());
 
+const isEachValueObject = (array) => {
+  return array.every((it) => typeof it === `object` && it !== null && Array.isArray(it) === false);
+};
+
+const generateString = (length, char) => [...Array(length)].map(() => char).join(``);
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -60,4 +66,6 @@ module.exports = {
   isCorrectPrimitiveType,
   makeAsync,
   generateData,
+  isEachValueObject,
+  generateString,
 };

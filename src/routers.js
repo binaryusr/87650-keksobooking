@@ -4,8 +4,9 @@ const express = require(`express`);
 const multer = require(`multer`);
 
 const generateEntity = require(`./generate-entity`);
-const {DEFAULT_MAX_QUANTITY} = require(`./utils/constants`);
-const {makeAsync, generateData} = require(`./utils/utils`);
+const getValidationErrors = require(`./validate`);
+const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`./utils/constants`);
+const {makeAsync, generateData, getRandomElement} = require(`./utils/utils`);
 const NotFoundError = require(`./error/not-found-error`);
 const IllegalArgumentError = require(`./error/illegal-argument-error`);
 const NotImplementedError = require(`./error/not-implemented-error`);
@@ -24,6 +25,14 @@ entities[5].date = 666;
 entities[6].date = 777;
 entities[7].date = 888;
 entities[8].date = 999;
+
+const addDefaultName = (object, defaultNames) => {
+  let copy = JSON.parse(JSON.stringify(object));
+  if (!copy.name) {
+    copy.name = getRandomElement(defaultNames);
+  }
+  return copy;
+};
 
 offersRouter.get(``, makeAsync(async (req, res) => {
   const skip = parseInt(req.query.skip, 10) || 0;
@@ -52,7 +61,15 @@ offersRouter.post(``, jsonParser, upload.single(`avatar`), makeAsync(async (req,
   if (req.file) {
     req.body.avatar = req.file.originalname;
   }
-  res.send(req.body);
+  const data = addDefaultName(req.body, DEFAULT_NAMES);
+  try {
+    // multipart form data
+    const validatedData = getValidationErrors(data);
+    // create offer, fix types - change `${entity.price}` to just a number, add location object,
+    res.send(validatedData);
+  } catch (err) {
+    res.status(err.code).json(err.errors);
+  }
 }));
 
 offersRouter.all(``, makeAsync(async () => {

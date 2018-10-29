@@ -3,22 +3,83 @@
 const request = require(`supertest`);
 const assert = require(`assert`);
 
-const {DEFAULT_MAX_QUANTITY} = require(`../src/utils/constants`);
 const app = require(`../src/app`);
+const {
+  isEachValueObject,
+  // generateString
+} = require(`../src/utils/utils`);
+const {
+  DEFAULT_MAX_QUANTITY,
+  // TITLE_MIN_LENGTH,
+  // TITLE_MAX_LENGTH,
+  // TYPES,
+  // ADDRESS_MAX_LENGTH,
+  // MIN_ROOMS,
+  // MAX_ROOMS,
+} = require(`../src/utils/constants`);
 
-const isEachValueObject = (array) => {
-  return array.every((it) => typeof it === `object` && it !== null && Array.isArray(it) === false);
+const generateValidEntity = () => {
+  const location = {x: 500, y: 400};
+  return {
+    author: {
+      name: `Anna Bolina`,
+      avatar: `test/fixtures/keks.png`,
+    },
+    offer: {
+      title: `Большая уютная квартира`,
+      address: `${location.x}, ${location.y}`,
+      price: 500,
+      type: `flat`,
+      rooms: 4,
+      guests: 4,
+      checkin: `09:00`,
+      checkout: `11:00`,
+      features: [`wifi`, `parking`, `elevator`, `conditioner`],
+      description: `Big and cozy apartment in the center of the city`,
+      photos: [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`],
+      preview: `test/fixtures/keks.png`,
+    },
+    location: {
+      x: location.x,
+      y: location.y,
+    },
+    date: 111
+  };
 };
 
-const generateTestEntity = () => ({
-  "author": {
-    "name": `John Hurt`,
-    "avatar": `test/fixtures/keks.png`
-  },
-  "title": `Большая уютная квартира`,
-  "price": 500,
-  "rooms": 4,
-});
+const generateFlatEntity = (fieldsToRemoveArray = [], newFields) => {
+  const testEntity = generateValidEntity();
+  let fields = {
+    name: testEntity.author.name,
+    price: testEntity.offer.price,
+    title: testEntity.offer.title,
+    address: testEntity.offer.address,
+    type: testEntity.offer.type,
+    rooms: testEntity.offer.rooms,
+    guests: testEntity.offer.guests,
+    checkin: testEntity.offer.checkin,
+    checkout: testEntity.offer.checkout,
+    features: testEntity.offer.features,
+    description: testEntity.offer.description,
+    photos: testEntity.offer.photos,
+    location: testEntity.location,
+    date: testEntity.date,
+    avatar: testEntity.author.avatar
+  };
+  if (newFields && Object.keys(newFields).length !== 0 && newFields.constructor === Object) {
+    fields = Object.assign(fields, newFields);
+  }
+  fieldsToRemoveArray.forEach((it) => delete fields[it]);
+  return fields;
+};
+
+// const sendInvalidData = async (data) => {
+//   await request(app)
+//     .post(`api/offers`)
+//     .send(data)
+//     .expect(400)
+//     .expect(`Content-Type`, /json/);
+// };
 
 describe(`GET /api/offers`, () => {
   describe(`success codes`, () => {
@@ -105,26 +166,98 @@ describe(`GET /api/offers`, () => {
 });
 
 describe(`POST /api/offers`, () => {
-  const entity = generateTestEntity();
-  it(`should respond to application/json format by default with application/json`, async () => {
-    const res = await request(app)
-      .post(`/api/offers`)
-      .send(entity)
-      .set(`Accept`, `application/json`)
-      .expect(200)
-      .expect(`Content-Type`, /json/);
-    assert.deepStrictEqual(res.body, entity);
+  describe(`ok requests`, () => {
+    const entity = generateFlatEntity([`photos`, `date`, `location`], {avatar: `keks.png`});
+    it(`should respond to application/json format by default with application/json`, async () => {
+      const res = await request(app)
+        .post(`/api/offers`)
+        .send(entity)
+        .set(`Accept`, `application/json`)
+        .expect(200)
+        .expect(`Content-Type`, /json/);
+      assert.deepStrictEqual(res.body, entity);
+    });
+    // it(`should respond to multipart/form-data with application/json format`, async () => {
+    //   const res = await request(app)
+    //     .post(`/api/offers`)
+    //     .field(`name`, `Anna Bolina`)
+    //     .field(`title`, `Большая уютная квартира`)
+    //     .field(`address`, `500, 400`)
+    //     .field(`description`, `Big and cozy apartment in the center of the city`)
+    //     .field(`price`, 500)
+    //     .field(`type`, `flat`)
+    //     .field(`rooms`, 4)
+    //     .field(`guests`, 4)
+    //     .field(`checkin`, `09:00`)
+    //     .field(`checkout`, `11:00`)
+    //     .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
+    //     .attach(`avatar`, `test/fixtures/keks.png`)
+    //     .set(`Accept`, `application/json`)
+    //     .set(`Content-Type`, `multipart/form-data`)
+    //     .expect(200)
+    //     .expect(`Content-Type`, /json/);
+    //   assert.deepStrictEqual(res.body, entity);
+    // });
   });
-  it(`should respond to multipart/form-data with application/json format`, async () => {
-    const res = await request(app)
-      .post(`/api/offers`)
-      .field(`name`, `John Hurt`)
-      .field(`price`, 500)
-      .attach(`avatar`, `test/fixtures/keks.png`)
-      .set(`Accept`, `application/json`)
-      .set(`Content-Type`, `multipart/form-data`)
-      .expect(200)
-      .expect(`Content-Type`, /json/);
-    assert.deepStrictEqual(res.body, {name: entity.author.name, price: `${entity.price}`, avatar: `keks.png`});
-  });
+
+  // describe(`error 400 for invalid fields`, () => {
+  //   const fieldsToRemove = [`photos`, `date`, `location`];
+  //   it(`should send 400 if one or more of the required fields is missing`, async () => {
+  //     await sendInvalidData({});
+  //   });
+  //   it(`should send 400 if the "title" is in the range from ${TITLE_MIN_LENGTH} to ${TITLE_MAX_LENGTH}`, async () => {
+  //     const titleShortData = generateFlatEntity(fieldsToRemove, {title: generateString(29, `a`)});
+  //     const titleLongData = generateFlatEntity(fieldsToRemove, {title: generateString(141, `a`)});
+  //     await sendInvalidData(titleShortData);
+  //     await sendInvalidData(titleLongData);
+  //   });
+  //   it(`should send 400 if the "type" isn't one of those: ${TYPES}`, async () => {
+  //     const invalidTypeData = generateFlatEntity(fieldsToRemove, {type: `blah`});
+  //     await sendInvalidData(invalidTypeData);
+  //   });
+  //   it(`should send 400 if "address" length is <= ${ADDRESS_MAX_LENGTH} and that it is valid`, async () => {
+  //     const invalidAddressData = generateFlatEntity(fieldsToRemove, {address: `blah, blah`});
+  //     const invalidAddressFormatData = generateFlatEntity(fieldsToRemove, {address: generateString(101, `a`)});
+  //     await sendInvalidData(invalidAddressData);
+  //     await sendInvalidData(invalidAddressFormatData);
+  //   });
+  //   it(`should send 400 if "checkin" has a format of HH:mm`, async () => {
+  //     const invalidCheckinData = generateFlatEntity(fieldsToRemove, {checkin: `12:000`});
+  //     await sendInvalidData(invalidCheckinData);
+  //   });
+  //   it(`should send 400 if "checkout" has a format of HH:mm`, async () => {
+  //     const invalidCheckoutData = generateFlatEntity(fieldsToRemove, {checkout: `122:000`});
+  //     await sendInvalidData(invalidCheckoutData);
+  //   });
+  //   it(`should send 400 if "rooms" is out of the range ${MIN_ROOMS} and ${MAX_ROOMS}`, async () => {
+  //     const tooFewRoomsData = generateFlatEntity(fieldsToRemove, {rooms: -1});
+  //     const tooManyRoomsData = generateFlatEntity(fieldsToRemove, {rooms: 1001});
+  //     await sendInvalidData(tooFewRoomsData);
+  //     await sendInvalidData(tooManyRoomsData);
+  //   });
+  //   it(`should send 400 if the "features" is not an array of unique correct values`, async () => {
+  //     const notArrayData = generateFlatEntity(fieldsToRemove, {features: {}});
+  //     const notUniqueData = generateFlatEntity(fieldsToRemove, {features: [`wifi`, `wifi`]});
+  //     const notCorrectData = generateFlatEntity(fieldsToRemove, {features: [`wifi`, `dishwasher`, `yo`]});
+  //     await sendInvalidData(notArrayData);
+  //     await sendInvalidData(notUniqueData);
+  //     await sendInvalidData(notCorrectData);
+  //   });
+  //   it(`should send 400 if "avatar" doesn't contain an image in jpg of png formats`, async () => {
+  //     // don't know how to FIX
+  //     const notJpgOrPngData = generateFlatEntity(fieldsToRemove, {avatar: `blah`});
+  //     await sendInvalidData(notJpgOrPngData);
+  //   });
+  //   it(`should send 400 if "preview" contains an image in jpg or png format`, async () => {
+  //     // don't know how to FIX
+  //     const notJpgOrPngData = generateFlatEntity(fieldsToRemove, {preview: `blah`});
+  //     await sendInvalidData(notJpgOrPngData);
+  //   });
+  //   it(`should send 400 if "name" contains whether the name of the user or one of the default names`, async () => {
+  //     const notValidNameData = generateFlatEntity(fieldsToRemove, {name: {}});
+  //     const noDefaultNamesData = generateFlatEntity(fieldsToRemove, {name: ``});
+  //     await sendInvalidData(notValidNameData);
+  //     await sendInvalidData(noDefaultNamesData);
+  //   });
+  // });
 });
