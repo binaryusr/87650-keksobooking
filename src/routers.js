@@ -4,6 +4,7 @@ const express = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 
+const ValidationError = require(`./error/validation-error`);
 const generateEntity = require(`./generate-entity`);
 const {validateFields} = require(`./validate`);
 const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`./utils/constants`);
@@ -23,7 +24,8 @@ const fileFilter = (req, file, cb) => {
   if (mimetype && extname) {
     return cb(null, true);
   }
-  return cb(`Error: File upload only supports the following filetypes - ${filetypes}`);
+  const error = new ValidationError(`Error: File upload only supports the following filetypes - ${filetypes}`);
+  return cb(error, false);
 };
 const allowedImages = [{name: `avatar`, maxCount: 1}, {name: `preview`, maxCount: 1}];
 const upload = multer({storage: multer.memoryStorage(), fileFilter}).fields(allowedImages);

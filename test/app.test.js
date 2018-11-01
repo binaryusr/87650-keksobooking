@@ -257,45 +257,45 @@ describe(`POST /api/offers`, () => {
         sendInvalidData(notCorrectData),
       ]);
     });
-    // it(`should send 400 if "avatar" doesn't contain an image in jpg of png formats`, async () => {
-    //   await request(app)
-    //     .post(`/api/offers`)
-    //     .field(`name`, `Anna Bolina`)
-    //     .field(`title`, `Уютное бунгало далеко от моря`)
-    //     .field(`address`, `500, 400`)
-    //     .field(`description`, `Big and cozy apartment in the center of the city`)
-    //     .field(`price`, 1010)
-    //     .field(`type`, `flat`)
-    //     .field(`rooms`, 4)
-    //     .field(`guests`, 4)
-    //     .field(`checkin`, `09:00`)
-    //     .field(`checkout`, `11:00`)
-    //     .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
-    //     .attach(`avatar`, `test/fixtures/favicon.ico`)
-    //     .set(`Accept`, `application/json`)
-    //     .set(`Content-Type`, `multipart/form-data`)
-    //     .expect(400)
-    //     .expect(`Content-Type`, /json/);
-    // });
-    // it(`should send 400 if "preview" contains an image in jpg or png format`, async () => {
-    //   await request(app)
-    //     .post(`/api/offers`)
-    //     .field(`name`, `Anna Bolina`)
-    //     .field(`title`, `Уютное бунгало далеко от моря`)
-    //     .field(`address`, `500, 400`)
-    //     .field(`description`, `Big and cozy apartment in the center of the city`)
-    //     .field(`price`, 1100)
-    //     .field(`type`, `flat`)
-    //     .field(`rooms`, 4)
-    //     .field(`guests`, 4)
-    //     .field(`checkin`, `09:00`)
-    //     .field(`checkout`, `11:00`)
-    //     .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
-    //     .attach(`preview`, `test/fixtures/favicon.ico`)
-    //     .set(`Accept`, `application/json`)
-    //     .set(`Content-Type`, `multipart/form-data`)
-    //     .expect(400)
-    //     .expect(`Content-Type`, /json/);
-    // });
+    it(`should send 400 if "avatar" doesn't contain an image in jpg of png formats`, async () => {
+      await request(app)
+        .post(`/api/offers`)
+        .field(`name`, `Anna Bolina`)
+        .field(`title`, `Уютное бунгало далеко от моря`)
+        .field(`address`, `500, 400`)
+        .field(`description`, `Big and cozy apartment in the center of the city`)
+        .field(`price`, 1010)
+        .field(`type`, `flat`)
+        .field(`rooms`, 4)
+        .field(`guests`, 4)
+        .field(`checkin`, `09:00`)
+        .field(`checkout`, `11:00`)
+        .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
+        .attach(`avatar`, `test/fixtures/favicon.ico`)
+        .set(`Accept`, `application/json`)
+        .set(`Content-Type`, `multipart/form-data`)
+        .expect(400)
+        .expect(`Content-Type`, /json/);
+    });
+    it(`should send 400 if "preview" contains an image in jpg or png format`, async () => {
+      await request(app)
+        .post(`/api/offers`)
+        .field(`name`, `Anna Bolina`)
+        .field(`title`, `Уютное бунгало далеко от моря`)
+        .field(`address`, `500, 400`)
+        .field(`description`, `Big and cozy apartment in the center of the city`)
+        .field(`price`, 1100)
+        .field(`type`, `flat`)
+        .field(`rooms`, 4)
+        .field(`guests`, 4)
+        .field(`checkin`, `09:00`)
+        .field(`checkout`, `11:00`)
+        .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
+        .attach(`preview`, `test/fixtures/favicon.ico`)
+        .set(`Accept`, `application/json`)
+        .set(`Content-Type`, `multipart/form-data`)
+        .expect(400)
+        .expect(`Content-Type`, /json/);
+    });
   });
 });

@@ -117,6 +117,10 @@ const isJpgOrPng = () => {
   return true;
 };
 
+const isFieldValid = () => {
+  return false;
+};
+
 const getFieldInfo = (fieldName, fieldValue) => {
   const fields = {
     name: {
@@ -188,7 +192,7 @@ const getFieldInfo = (fieldName, fieldValue) => {
   if (!fields[fieldName]) {
     return {
       fieldName: `${fieldName}`,
-      isValid: false,
+      isValid: isFieldValid,
       errorMessage: `${fieldName} is unknown`,
     };
   }
