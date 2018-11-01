@@ -62,7 +62,6 @@ const generateFlatEntity = (fieldsToRemoveArray = [], newFields) => {
     checkout: testEntity.offer.checkout,
     features: testEntity.offer.features,
     description: testEntity.offer.description,
-    photos: testEntity.offer.photos,
     location: testEntity.location,
     date: testEntity.date,
   };
@@ -176,7 +175,7 @@ describe(`GET /api/offers`, () => {
 
 describe(`POST /api/offers`, () => {
   describe(`ok requests`, () => {
-    const entity = generateFlatEntity([`photos`, `date`, `location`]);
+    const entity = generateFlatEntity([`date`, `location`]);
     it(`should respond to application/json format by default with application/json`, async () => {
       await sendValidData(entity);
     });
@@ -186,34 +185,33 @@ describe(`POST /api/offers`, () => {
       assert.deepStrictEqual(responseNoLocation, entity);
       assert.deepStrictEqual(isObject(res.body.location), true);
     });
-    // it(`should respond to multipart/form-data with application/json format`, async () => {
-    //   const res = await request(app)
-    //     .post(`/api/offers`)
-    //     .field(`name`, `Anna Bolina`)
-    //     .field(`title`, `Уютное бунгало далеко от моря`)
-    //     .field(`address`, `500, 400`)
-    //     .field(`description`, `Big and cozy apartment in the center of the city`)
-    //     .field(`price`, 1010)
-    //     .field(`type`, `flat`)
-    //     .field(`rooms`, 4)
-    //     .field(`guests`, 4)
-    //     .field(`checkin`, `09:00`)
-    //     .field(`checkout`, `11:00`)
-    //     .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
-    //     .attach(`avatar`, `test/fixtures/keks.png`)
-    //     .set(`Accept`, `application/json`)
-    //     .set(`Content-Type`, `multipart/form-data`)
-    //     .expect(200)
-    //     .expect(`Content-Type`, /json/);
-    //   const responseNoLocation = removeField(res.body, `location`);
-    //   console.log(responseNoLocation, `responseNoLocation`);
-    //   assert.deepStrictEqual(responseNoLocation, entity);
-    //   assert.deepStrictEqual(isObject(res.body.location), true);
-    // });
+    it(`should respond to multipart/form-data with application/json format`, async () => {
+      const res = await request(app)
+        .post(`/api/offers`)
+        .field(`name`, `Anna Bolina`)
+        .field(`title`, `Уютное бунгало далеко от моря`)
+        .field(`address`, `500, 400`)
+        .field(`description`, `Big and cozy apartment in the center of the city`)
+        .field(`price`, 1010)
+        .field(`type`, `flat`)
+        .field(`rooms`, 4)
+        .field(`guests`, 4)
+        .field(`checkin`, `09:00`)
+        .field(`checkout`, `11:00`)
+        .field(`features`, [`wifi`, `parking`, `elevator`, `conditioner`])
+        .attach(`avatar`, `test/fixtures/keks.png`)
+        .set(`Accept`, `application/json`)
+        .set(`Content-Type`, `multipart/form-data`)
+        .expect(200)
+        .expect(`Content-Type`, /json/);
+      const responseNoLocation = removeField(res.body, `location`);
+      assert.deepStrictEqual(responseNoLocation, Object.assign(entity, {avatar: `keks.png`}));
+      assert.deepStrictEqual(isObject(res.body.location), true);
+    });
   });
 
   describe(`error 400 for invalid fields`, () => {
-    const fieldsToRemove = [`photos`, `date`, `location`, `avatar`, `preview`];
+    const fieldsToRemove = [`date`, `location`, `avatar`, `preview`];
     it(`should send 400 if one or more of the required fields are missing`, async () => {
       const errorMessages = getFieldRequiredMessages({}, REQUIRED_FIELDS_ARRAY);
       const res = await sendInvalidData({});

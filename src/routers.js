@@ -2,6 +2,7 @@
 
 const express = require(`express`);
 const multer = require(`multer`);
+const path = require(`path`);
 
 const generateEntity = require(`./generate-entity`);
 const {validateFields} = require(`./validate`);
@@ -15,9 +16,17 @@ const NotImplementedError = require(`./error/not-implemented-error`);
 
 const offersRouter = new express.Router();
 const jsonParser = express.json();
-const upload = multer({storage: multer.memoryStorage()});
-
+const fileFilter = (req, file, cb) => {
+  const filetypes = /jpeg|jpg|png/;
+  const mimetype = filetypes.test(file.mimetype);
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  if (mimetype && extname) {
+    return cb(null, true);
+  }
+  return cb(`Error: File upload only supports the following filetypes - ${filetypes}`);
+};
 const allowedImages = [{name: `avatar`, maxCount: 1}, {name: `preview`, maxCount: 1}];
+const upload = multer({storage: multer.memoryStorage(), fileFilter}).fields(allowedImages);
 
 const entities = generateData(DEFAULT_MAX_QUANTITY, generateEntity);
 entities[0].date = 111;
@@ -57,12 +66,14 @@ offersRouter.get(`/:date`, makeAsync(async (req, res) => {
   res.send(entityForResponse);
 }));
 
-offersRouter.post(``, jsonParser, upload.fields(allowedImages), makeAsync(async (req, res) => {
-  if (req.files && req.files.avatar) {
-    req.body.avatar = req.files.avatar[0].originalname;
-  }
-  if (req.files && req.files.preview) {
-    req.body.preview = req.files.preview[0].originalname;
+offersRouter.post(``, jsonParser, upload, makeAsync(async (req, res) => {
+  if (req.files) {
+    if (req.files.avatar) {
+      req.body.avatar = req.files.avatar[0].originalname;
+    }
+    if (req.files.preview) {
+      req.body.preview = req.files.preview[0].originalname;
+    }
   }
   try {
     const dataWithName = addDefaultName(req.body, DEFAULT_NAMES);

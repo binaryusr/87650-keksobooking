@@ -113,6 +113,10 @@ const isDescriptionValid = (descriptionField) => {
   return typeof descriptionField === `string`;
 };
 
+const isJpgOrPng = () => {
+  return true;
+};
+
 const getFieldInfo = (fieldName, fieldValue) => {
   const fields = {
     name: {
@@ -170,31 +174,16 @@ const getFieldInfo = (fieldName, fieldValue) => {
       isValid: isDescriptionValid,
       errorMessage: `Description must be a string or undefined. Got ${fieldValue}`,
     },
-    // photos: {
-    //   fieldName: `photos`,
-    //   isValid: false,
-    //   errorMessage: ``,
-    // },
-    // location: {
-    //   fieldName: `location`,
-    //   isValid: false,
-    //   errorMessage: ``,
-    // },
-    // date: {
-    //   fieldName: `date`,
-    //   isValid: false,
-    //   errorMessage: ``,
-    // },
-    // avatar: {
-    //   fieldName: `avatar`,
-    //   isValid: false,
-    //   errorMessage: ``,
-    // },
-    // preview: {
-    //   fieldName: `preview`,
-    //   isValid: false,
-    //   errorMessage: ``,
-    // },
+    avatar: {
+      fieldName: `avatar`,
+      isValid: isJpgOrPng,
+      errorMessage: `Avatar must be an image in jpg or png format`,
+    },
+    preview: {
+      fieldName: `preview`,
+      isValid: isJpgOrPng,
+      errorMessage: `Preview must be an image in jpg or png format`,
+    },
   };
   if (!fields[fieldName]) {
     return {
