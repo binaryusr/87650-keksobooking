@@ -48,6 +48,51 @@ const makeAsync = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 const generateData = (number, fn) => [...Array(number)].map(() => fn());
 
+const isObject = (entry) => typeof entry === `object` && entry !== null && !Array.isArray(entry);
+
+const isEachValueObject = (array) => array.every((it) => isObject(it));
+
+const generateString = (length, char) => [...Array(length)].map(() => char).join(``);
+
+const castFieldsToNumber = (data, fieldsToConvert) => {
+  const copy = JSON.parse(JSON.stringify(data));
+  const convertedData = fieldsToConvert.reduce((acc, it) => {
+    if (typeof parseInt(copy[it], 10) === `number` && !isNaN(parseInt(copy[it], 10))) {
+      return Object.assign(acc, {[it]: parseInt(copy[it], 10)});
+    }
+    return acc;
+  }, {});
+  return Object.assign(copy, convertedData);
+};
+
+const addField = (data, field, value) => {
+  const copy = JSON.parse(JSON.stringify(data));
+  return Object.assign(copy, {[field]: value});
+};
+
+const removeField = (data, field) => {
+  const copy = JSON.parse(JSON.stringify(data));
+  delete copy[field];
+  return copy;
+};
+
+const areArrayValuesSame = (arrayOne, arrayTwo) => {
+  if (arrayOne.length !== arrayTwo.length) {
+    return false;
+  }
+  return arrayOne.every((it) => arrayTwo.includes(it));
+};
+
+const buildCoordinates = (addressField) => {
+  if (typeof addressField !== `string`) {
+    return undefined;
+  }
+  const coordinates = addressField.split(`, `);
+  const x = parseFloat(coordinates[0]);
+  const y = parseFloat(coordinates[1]);
+  return {x, y};
+};
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -60,4 +105,12 @@ module.exports = {
   isCorrectPrimitiveType,
   makeAsync,
   generateData,
+  isObject,
+  isEachValueObject,
+  generateString,
+  castFieldsToNumber,
+  addField,
+  removeField,
+  areArrayValuesSame,
+  buildCoordinates,
 };
