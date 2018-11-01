@@ -4,9 +4,11 @@ const express = require(`express`);
 const multer = require(`multer`);
 
 const generateEntity = require(`./generate-entity`);
-const getValidationErrors = require(`./validate`);
+const {validateFields} = require(`./validate`);
 const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`./utils/constants`);
-const {makeAsync, generateData, getRandomElement} = require(`./utils/utils`);
+const {
+  makeAsync, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
+} = require(`./utils/utils`);
 const NotFoundError = require(`./error/not-found-error`);
 const IllegalArgumentError = require(`./error/illegal-argument-error`);
 const NotImplementedError = require(`./error/not-implemented-error`);
@@ -14,6 +16,8 @@ const NotImplementedError = require(`./error/not-implemented-error`);
 const offersRouter = new express.Router();
 const jsonParser = express.json();
 const upload = multer({storage: multer.memoryStorage()});
+
+const allowedImages = [{name: `avatar`, maxCount: 1}, {name: `preview`, maxCount: 1}];
 
 const entities = generateData(DEFAULT_MAX_QUANTITY, generateEntity);
 entities[0].date = 111;
@@ -26,12 +30,8 @@ entities[6].date = 777;
 entities[7].date = 888;
 entities[8].date = 999;
 
-const addDefaultName = (object, defaultNames) => {
-  let copy = JSON.parse(JSON.stringify(object));
-  if (!copy.name) {
-    copy.name = getRandomElement(defaultNames);
-  }
-  return copy;
+const addDefaultName = (data, defaultNames) => {
+  return !data.name ? addField(data, `name`, getRandomElement(defaultNames)) : data;
 };
 
 offersRouter.get(``, makeAsync(async (req, res) => {
@@ -57,16 +57,19 @@ offersRouter.get(`/:date`, makeAsync(async (req, res) => {
   res.send(entityForResponse);
 }));
 
-offersRouter.post(``, jsonParser, upload.single(`avatar`), makeAsync(async (req, res) => {
-  if (req.file) {
-    req.body.avatar = req.file.originalname;
+offersRouter.post(``, jsonParser, upload.fields(allowedImages), makeAsync(async (req, res) => {
+  if (req.files && req.files.avatar) {
+    req.body.avatar = req.files.avatar[0].originalname;
   }
-  const data = addDefaultName(req.body, DEFAULT_NAMES);
+  if (req.files && req.files.preview) {
+    req.body.preview = req.files.preview[0].originalname;
+  }
   try {
-    // multipart form data
-    const validatedData = getValidationErrors(data);
-    // create offer, fix types - change `${entity.price}` to just a number, add location object,
-    res.send(validatedData);
+    const dataWithName = addDefaultName(req.body, DEFAULT_NAMES);
+    const data = castFieldsToNumber(dataWithName, [`price`, `rooms`, `guests`]);
+    validateFields(data);
+    const dataWithLocation = addField(data, `location`, buildCoordinates(req.body.address));
+    res.send(dataWithLocation);
   } catch (err) {
     res.status(err.code).json(err.errors);
   }

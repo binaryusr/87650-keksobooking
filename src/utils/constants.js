@@ -61,7 +61,7 @@ module.exports = {
   DEFAULT_PORT: 8080,
   HOSTNAME: `127.0.0.1`,
   DEFAULT_MAX_QUANTITY: 20,
-  TITLE_MIN_LENGTH: 30,
+  TITLE_MIN_LENGTH: 25,
   TITLE_MAX_LENGTH: 140,
   ADDRESS_MAX_LENGTH: 140,
   REQUIRED_FIELDS_ARRAY: [`title`, `type`, `address`, `checkin`, `checkout`, `rooms`],
