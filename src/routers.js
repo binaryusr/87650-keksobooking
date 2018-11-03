@@ -9,7 +9,7 @@ const generateEntity = require(`./generate-entity`);
 const {validateFields} = require(`./validate`);
 const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`./utils/constants`);
 const {
-  makeAsync, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
+  asyncMiddleware, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
 } = require(`./utils/utils`);
 const NotFoundError = require(`./error/not-found-error`);
 const IllegalArgumentError = require(`./error/illegal-argument-error`);
@@ -45,7 +45,7 @@ const addDefaultName = (data, defaultNames) => {
   return !data.name ? addField(data, `name`, getRandomElement(defaultNames)) : data;
 };
 
-offersRouter.get(``, makeAsync(async (req, res) => {
+offersRouter.get(``, asyncMiddleware(async (req, res) => {
   const skip = parseInt(req.query.skip, 10) || 0;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_MAX_QUANTITY;
   if (skip < 0 || limit < 0 || skip > limit) {
@@ -54,7 +54,7 @@ offersRouter.get(``, makeAsync(async (req, res) => {
   res.send(entities.slice(skip, skip + limit));
 }));
 
-offersRouter.get(`/:date`, makeAsync(async (req, res) => {
+offersRouter.get(`/:date`, asyncMiddleware(async (req, res) => {
   if (!req.params.date) {
     throw new IllegalArgumentError(`No date provided`);
   }
@@ -68,7 +68,7 @@ offersRouter.get(`/:date`, makeAsync(async (req, res) => {
   res.send(entityForResponse);
 }));
 
-offersRouter.post(``, jsonParser, upload, makeAsync(async (req, res) => {
+offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {
   if (req.files) {
     if (req.files.avatar) {
       req.body.avatar = req.files.avatar[0].originalname;
@@ -88,7 +88,7 @@ offersRouter.post(``, jsonParser, upload, makeAsync(async (req, res) => {
   }
 }));
 
-offersRouter.all(``, makeAsync(async () => {
+offersRouter.all(``, asyncMiddleware(async () => {
   throw new NotImplementedError(`This method is not supported`);
 }));
 

@@ -44,7 +44,7 @@ const isCorrectPrimitiveType = (value, type, errMessage) => {
   }
 };
 
-const makeAsync = (fn) => (req, res, next) => fn(req, res, next).catch(next);
+const asyncMiddleware = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 const generateData = (number, fn) => [...Array(number)].map(() => fn());
 
@@ -103,7 +103,7 @@ module.exports = {
   isYes,
   isNo,
   isCorrectPrimitiveType,
-  makeAsync,
+  asyncMiddleware,
   generateData,
   isObject,
   isEachValueObject,
