@@ -113,14 +113,6 @@ const isDescriptionValid = (descriptionField) => {
   return typeof descriptionField === `string`;
 };
 
-const isJpgOrPng = () => {
-  return true;
-};
-
-const isFieldValid = () => {
-  return false;
-};
-
 const getFieldInfo = (fieldName, fieldValue) => {
   const fields = {
     name: {
@@ -180,19 +172,19 @@ const getFieldInfo = (fieldName, fieldValue) => {
     },
     avatar: {
       fieldName: `avatar`,
-      isValid: isJpgOrPng,
+      isValid: () => true,
       errorMessage: `Avatar must be an image in jpg or png format`,
     },
     preview: {
       fieldName: `preview`,
-      isValid: isJpgOrPng,
+      isValid: () => true,
       errorMessage: `Preview must be an image in jpg or png format`,
     },
   };
   if (!fields[fieldName]) {
     return {
       fieldName: `${fieldName}`,
-      isValid: isFieldValid,
+      isValid: () => false,
       errorMessage: `${fieldName} is unknown`,
     };
   }
