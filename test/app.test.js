@@ -4,7 +4,7 @@ const request = require(`supertest`);
 const assert = require(`assert`);
 
 const app = require(`../src/app`);
-const {getFieldRequiredMessages} = require(`../src/validate`);
+const {getFieldRequiredMessages} = require(`../src/offers/validate`);
 const {
   isEachValueObject, generateString, removeField, isObject, areArrayValuesSame
 } = require(`../src/utils/utils`);

@@ -1,6 +1,6 @@
 'use strict';
 
-const ValidationError = require(`./errors/validation-error`);
+const ValidationError = require(`../errors/validation-error`);
 const {
   REQUIRED_FIELDS_ARRAY,
   TITLE_MIN_LENGTH,
@@ -15,8 +15,8 @@ const {
   DEFAULT_NAMES,
   MIN_GUESTS,
   MAX_GUESTS,
-} = require(`./utils/constants`);
-const {isInRangeInclusive, isSubset, buildCoordinates} = require(`./utils/utils`);
+} = require(`../utils/constants`);
+const {isInRangeInclusive, isSubset, buildCoordinates} = require(`../utils/utils`);
 
 const getFieldRequiredMessages = (data, requiredFields) => requiredFields.reduce((acc, it) => {
   if (typeof data[it] === `undefined`) {

@@ -4,17 +4,17 @@ const express = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 
-const generateEntity = require(`./generate-entity`);
 const {validateFields} = require(`./validate`);
-const ValidationError = require(`./errors/validation-error`);
-const NotFoundError = require(`./errors/not-found-error`);
-const IllegalArgumentError = require(`./errors/illegal-argument-error`);
-const NotImplementedError = require(`./errors/not-implemented-error`);
+const generateEntity = require(`../generate-entity`);
+const ValidationError = require(`../errors/validation-error`);
+const NotFoundError = require(`../errors/not-found-error`);
+const IllegalArgumentError = require(`../errors/illegal-argument-error`);
+const NotImplementedError = require(`../errors/not-implemented-error`);
 
-const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`./utils/constants`);
+const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`../utils/constants`);
 const {
   asyncMiddleware, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
-} = require(`./utils/utils`);
+} = require(`../utils/utils`);
 
 const offersRouter = new express.Router();
 
