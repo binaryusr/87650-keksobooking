@@ -2,7 +2,7 @@
 
 const express = require(`express`);
 
-const {offersRouter} = require(`./offers/routers`);
+const {offersRouter} = require(`./offers/router`);
 
 const app = express();
 
