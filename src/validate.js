@@ -1,6 +1,6 @@
 'use strict';
 
-const ValidationError = require(`./error/validation-error`);
+const ValidationError = require(`./errors/validation-error`);
 const {
   REQUIRED_FIELDS_ARRAY,
   TITLE_MIN_LENGTH,

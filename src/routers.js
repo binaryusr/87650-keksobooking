@@ -4,19 +4,22 @@ const express = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
 
-const ValidationError = require(`./error/validation-error`);
 const generateEntity = require(`./generate-entity`);
 const {validateFields} = require(`./validate`);
+const ValidationError = require(`./errors/validation-error`);
+const NotFoundError = require(`./errors/not-found-error`);
+const IllegalArgumentError = require(`./errors/illegal-argument-error`);
+const NotImplementedError = require(`./errors/not-implemented-error`);
+
 const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`./utils/constants`);
 const {
   asyncMiddleware, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
 } = require(`./utils/utils`);
-const NotFoundError = require(`./error/not-found-error`);
-const IllegalArgumentError = require(`./error/illegal-argument-error`);
-const NotImplementedError = require(`./error/not-implemented-error`);
 
 const offersRouter = new express.Router();
+
 const jsonParser = express.json();
+
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpeg|jpg|png/;
   const mimetype = filetypes.test(file.mimetype);
@@ -27,7 +30,9 @@ const fileFilter = (req, file, cb) => {
   const error = new ValidationError(`Error: File upload only supports the following filetypes - ${filetypes}`);
   return cb(error, false);
 };
+
 const allowedImages = [{name: `avatar`, maxCount: 1}, {name: `preview`, maxCount: 1}];
+
 const upload = multer({storage: multer.memoryStorage(), fileFilter}).fields(allowedImages);
 
 const entities = generateData(DEFAULT_MAX_QUANTITY, generateEntity);
