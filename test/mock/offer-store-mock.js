@@ -5,16 +5,14 @@ const generateEntity = require(`../../src/generate-entity`);
 const {PAGE_DEFAULT_LIMIT} = require(`../../src/utils/constants`);
 const {generateData} = require(`../../src/utils/utils`);
 
-const entities = generateData(PAGE_DEFAULT_LIMIT, generateEntity);
-entities[0].date = 111;
-entities[1].date = 222;
-entities[2].date = 333;
-entities[3].date = 444;
-entities[4].date = 555;
-entities[5].date = 666;
-entities[6].date = 777;
-entities[7].date = 888;
-entities[8].date = 999;
+const generateTestOffers = () => {
+  const offers = generateData(PAGE_DEFAULT_LIMIT, generateEntity);
+  let startDate = 111;
+  offers.forEach((it, i) => {
+    it.date = i === 0 ? startDate : startDate * (i + 1);
+  });
+  return offers;
+};
 
 class OfferStoreMock {
   constructor(data) {
@@ -32,4 +30,4 @@ class OfferStoreMock {
   async saveOne() {}
 }
 
-module.exports = new OfferStoreMock(entities);
+module.exports = new OfferStoreMock(generateTestOffers());

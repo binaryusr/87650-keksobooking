@@ -5,7 +5,6 @@ const multer = require(`multer`);
 const path = require(`path`);
 
 const {validateFields} = require(`./validate`);
-const generateEntity = require(`../generate-entity`);
 const ValidationError = require(`../errors/validation-error`);
 const NotFoundError = require(`../errors/not-found-error`);
 const IllegalArgumentError = require(`../errors/illegal-argument-error`);
@@ -13,7 +12,7 @@ const NotImplementedError = require(`../errors/not-implemented-error`);
 
 const {PAGE_DEFAULT_LIMIT, DEFAULT_NAMES} = require(`../utils/constants`);
 const {
-  asyncMiddleware, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
+  asyncMiddleware, getRandomElement, castFieldsToNumber, addField, buildCoordinates
 } = require(`../utils/utils`);
 
 const offersRouter = new express.Router();
@@ -34,17 +33,6 @@ const fileFilter = (req, file, cb) => {
 const allowedImages = [{name: `avatar`, maxCount: 1}, {name: `preview`, maxCount: 1}];
 
 const upload = multer({storage: multer.memoryStorage(), fileFilter}).fields(allowedImages);
-
-const entities = generateData(PAGE_DEFAULT_LIMIT, generateEntity);
-entities[0].date = 111;
-entities[1].date = 222;
-entities[2].date = 333;
-entities[3].date = 444;
-entities[4].date = 555;
-entities[5].date = 666;
-entities[6].date = 777;
-entities[7].date = 888;
-entities[8].date = 999;
 
 const addDefaultName = (data, defaultNames) => {
   return !data.name ? addField(data, `name`, getRandomElement(defaultNames)) : data;
@@ -81,7 +69,7 @@ offersRouter.get(`/:date`, asyncMiddleware(async (req, res) => {
   }
   const offer = await offersRouter.offerStore.getOne(dateAsInt);
   if (!offer) {
-    throw new NotFoundError(`The offer with the date: ${new Date(date)} is not found`);
+    throw new NotFoundError(`The offer with the date: ${date} is not found`);
   }
   res.send(offer);
 }));
