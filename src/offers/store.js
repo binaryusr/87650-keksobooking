@@ -1,10 +1,10 @@
 'use strict';
 
-const mongodb = require(`../mongodb`);
+const db = require(`../db`);
 
 const setupCollection = async (name) => {
-  const db = await mongodb;
-  const collection = db.collection(name);
+  const dBase = await db;
+  const collection = dBase.collection(name);
   collection.createIndex({date: -1}, {unique: true});
   return collection;
 };
@@ -24,10 +24,6 @@ class OfferStore {
 
   async saveOne(entity) {
     return (await this.collection).insertOne(entity);
-  }
-
-  async saveMany(entities) {
-    return (await this.collection).insertOne(entities);
   }
 }
 

@@ -3,6 +3,7 @@
 const express = require(`express`);
 const multer = require(`multer`);
 const path = require(`path`);
+const toStream = require(`buffer-to-stream`);
 
 const {validateFields} = require(`./validate`);
 const ValidationError = require(`../errors/validation-error`);
@@ -74,6 +75,32 @@ offersRouter.get(`/:date`, asyncMiddleware(async (req, res) => {
   res.send(offer);
 }));
 
+offersRouter.get(`/:date/avatar`, asyncMiddleware(async (req, res) => {
+  const {date} = req.params;
+  const dateAsInt = parseInt(date, 10);
+  if (!date) {
+    throw new IllegalArgumentError(`No date provided`);
+  }
+  if (isNaN(dateAsInt)) {
+    throw new IllegalArgumentError(`The date format is incorrect.`);
+  }
+  const offer = await offersRouter.offerStore.getOne(dateAsInt);
+  if (!offer) {
+    throw new NotFoundError(`The offer with the date: ${date} is not found`);
+  }
+  const result = await offersRouter.imageStore.getAvatar(offer.date);
+  if (!result) {
+    throw new NotFoundError(`Avatar is not found`);
+  }
+  res.header(`Content-Type`, `image/jpg`);
+  res.header(`Content-Length`, result.info.length);
+  res.on(`error`, (err) => console.error(err));
+  res.on(`end`, () => res.end());
+  const stream = result.stream;
+  stream.on(`error`, (err) => console.error(err));
+  stream.pipe(res.end());
+}));
+
 offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {
   if (req.files) {
     if (req.files.avatar) {
@@ -83,22 +110,29 @@ offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {
       req.body.preview = req.files.preview[0].originalname;
     }
   }
-  try {
-    const dataWithName = addDefaultName(req.body, DEFAULT_NAMES);
-    const data = castFieldsToNumber(dataWithName, [`price`, `rooms`, `guests`]);
-    validateFields(data);
-    const dataWithLocation = addField(data, `location`, buildCoordinates(req.body.address));
-    res.send(dataWithLocation);
-  } catch (err) {
-    res.status(err.code).json(err.errors);
+  const dataWithName = addDefaultName(req.body, DEFAULT_NAMES);
+  const data = castFieldsToNumber(dataWithName, [`price`, `rooms`, `guests`]);
+  validateFields(data);
+  const dataWithLocation = addField(data, `location`, buildCoordinates(req.body.address));
+  const result = await offersRouter.offerStore.saveOne(dataWithLocation);
+  const {insertedId} = result;
+  if (req.files) {
+    if (req.files.avatar) {
+      await offersRouter.imageStore.saveAvatar(insertedId, toStream(req.files.avatar[0].buffer));
+    }
+    if (req.files.preview) {
+      await offersRouter.imageStore.savePreview(insertedId, toStream(req.files.preview[0].buffer));
+    }
   }
+  res.send(dataWithLocation);
 }));
 
 offersRouter.all(``, asyncMiddleware(async () => {
   throw new NotImplementedError(`This method is not supported`);
 }));
 
-module.exports = (store) => {
-  offersRouter.offerStore = store;
+module.exports = (offerStore, imageStore) => {
+  offersRouter.offerStore = offerStore;
+  offersRouter.imageStore = imageStore;
   return offersRouter;
 };

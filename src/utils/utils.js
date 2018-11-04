@@ -1,5 +1,8 @@
 'use strict';
 
+const {MongoError} = require(`mongodb`);
+
+const ValidationError = require(`../errors/validation-error`);
 const {
   MS_PER_SECOND,
   SECONDS_PER_MINUTE,
@@ -95,7 +98,13 @@ const buildCoordinates = (addressField) => {
 
 const expressErrorHandler = (err, req, res, _next) => {
   if (err) {
-    console.error(err.stack);
+    console.error(err);
+    if (err instanceof ValidationError) {
+      res.status(err.code).json(err.errors);
+    }
+    if (err instanceof MongoError) {
+      res.status(400).json(err.message);
+    }
     if (err.code === 400) {
       res.status(err.code).json(err.message);
     }

@@ -5,7 +5,8 @@ const assert = require(`assert`);
 const express = require(`express`);
 
 const offerStoreMock = require(`./mock/offer-store-mock`);
-const offersRouter = require(`../src/offers/router`)(offerStoreMock);
+const ImageStoreMock = require(`./mock/image-store-mock`);
+const offersRouter = require(`../src/offers/router`)(offerStoreMock, ImageStoreMock);
 const {getFieldRequiredMessages} = require(`../src/offers/validate`);
 const {
   isEachValueObject, generateString, removeField, isObject, areArrayValuesSame, expressErrorHandler
@@ -180,6 +181,27 @@ describe(`GET /api/offers`, () => {
   });
 });
 
+describe(`GET /api/offers/:date/avatar`, () => {
+  it(`should respond with the avatar if the offer with the specified date is found. "/offers/111/avatar"`, async () => {
+    await request(app)
+      .get(`/api/offers/111/avatar`)
+      .expect(200)
+      .expect(`Content-Type`, /jpeg|jpg|png/);
+  });
+  it(`should respond with 404 if there is no specified offer. "/offers/0/avatar"`, async () => {
+    await request(app)
+      .get(`/api/offers/0/avatar`)
+      .expect(404)
+      .expect(`Content-Type`, /text\/html/);
+  });
+  it(`should respond with 404 if the offer doesn't have avatar. "/offers/222/avatar"`, async () => {
+    await request(app)
+      .get(`/api/offers/222/avatar`)
+      .expect(404)
+      .expect(`Content-Type`, /text\/html/);
+  });
+});
+
 describe(`POST /api/offers`, () => {
   describe(`ok requests`, () => {
     const entity = generateFlatEntity([`date`, `location`]);
@@ -189,7 +211,8 @@ describe(`POST /api/offers`, () => {
     it(`should respond with correct fields`, async () => {
       const res = await sendValidData(entity);
       const responseNoLocation = removeField(res.body, `location`);
-      assert.deepStrictEqual(responseNoLocation, entity);
+      const responseNoId = removeField(responseNoLocation, `insertedId`);
+      assert.deepStrictEqual(responseNoId, entity);
       assert.deepStrictEqual(isObject(res.body.location), true);
     });
     it(`should respond to multipart/form-data with application/json format`, async () => {
@@ -212,7 +235,8 @@ describe(`POST /api/offers`, () => {
         .expect(200)
         .expect(`Content-Type`, /json/);
       const responseNoLocation = removeField(res.body, `location`);
-      assert.deepStrictEqual(responseNoLocation, Object.assign(entity, {avatar: `keks.png`}));
+      const responseNoId = removeField(responseNoLocation, `insertedId`);
+      assert.deepStrictEqual(responseNoId, Object.assign(entity, {avatar: `keks.png`}));
       assert.deepStrictEqual(isObject(res.body.location), true);
     });
   });

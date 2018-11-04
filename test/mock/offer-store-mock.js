@@ -5,6 +5,8 @@ const generateEntity = require(`../../src/generate-entity`);
 const {PAGE_DEFAULT_LIMIT} = require(`../../src/utils/constants`);
 const {generateData} = require(`../../src/utils/utils`);
 
+let id = 0;
+
 const generateTestOffers = () => {
   const offers = generateData(PAGE_DEFAULT_LIMIT, generateEntity);
   let startDate = 111;
@@ -27,7 +29,11 @@ class OfferStoreMock {
     return new Cursor(this.data);
   }
 
-  async saveOne() {}
+  async saveOne(data) {
+    id++;
+    data.insertedId = id;
+    return data;
+  }
 }
 
 module.exports = new OfferStoreMock(generateTestOffers());
