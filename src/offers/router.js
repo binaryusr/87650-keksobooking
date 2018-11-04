@@ -71,17 +71,19 @@ offersRouter.get(``, asyncMiddleware(async (req, res) => {
 }));
 
 offersRouter.get(`/:date`, asyncMiddleware(async (req, res) => {
-  if (!req.params.date) {
+  const {date} = req.params;
+  const dateAsInt = parseInt(date, 10);
+  if (!date) {
     throw new IllegalArgumentError(`No date provided`);
   }
-  if (isNaN(parseInt(req.params.date, 10))) {
-    throw new IllegalArgumentError(`The format of date is incorrect.`);
+  if (isNaN(dateAsInt)) {
+    throw new IllegalArgumentError(`The date format is incorrect.`);
   }
-  const offerForResponse = entities.find((it) => it.date === parseInt(req.params.date, 10));
-  if (!offerForResponse) {
-    throw new NotFoundError(`The entity with the date ${req.params.date} is not found`);
+  const offer = await offersRouter.offerStore.getOne(dateAsInt);
+  if (!offer) {
+    throw new NotFoundError(`The offer with the date: ${new Date(date)} is not found`);
   }
-  res.send(offerForResponse);
+  res.send(offer);
 }));
 
 offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {

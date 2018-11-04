@@ -22,7 +22,7 @@ class OfferStoreMock {
   }
 
   async getOne(date) {
-    return this.data.find((it) => parseInt(it.date, 10) === date.date);
+    return this.data.find((it) => parseInt(it.date, 10) === date);
   }
 
   async getAll() {
