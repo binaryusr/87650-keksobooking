@@ -93,6 +93,16 @@ const buildCoordinates = (addressField) => {
   return {x, y};
 };
 
+const expressErrorHandler = (err, req, res, _next) => {
+  if (err) {
+    console.error(err.stack);
+    if (err.code === 400) {
+      res.status(err.code).json(err.message);
+    }
+    res.status(err.code || 500).send(err.message);
+  }
+};
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -113,4 +123,5 @@ module.exports = {
   removeField,
   areArrayValuesSame,
   buildCoordinates,
+  expressErrorHandler,
 };

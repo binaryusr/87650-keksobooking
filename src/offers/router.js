@@ -11,7 +11,7 @@ const NotFoundError = require(`../errors/not-found-error`);
 const IllegalArgumentError = require(`../errors/illegal-argument-error`);
 const NotImplementedError = require(`../errors/not-implemented-error`);
 
-const {DEFAULT_MAX_QUANTITY, DEFAULT_NAMES} = require(`../utils/constants`);
+const {PAGE_DEFAULT_LIMIT, DEFAULT_NAMES} = require(`../utils/constants`);
 const {
   asyncMiddleware, generateData, getRandomElement, castFieldsToNumber, addField, buildCoordinates
 } = require(`../utils/utils`);
@@ -35,7 +35,7 @@ const allowedImages = [{name: `avatar`, maxCount: 1}, {name: `preview`, maxCount
 
 const upload = multer({storage: multer.memoryStorage(), fileFilter}).fields(allowedImages);
 
-const entities = generateData(DEFAULT_MAX_QUANTITY, generateEntity);
+const entities = generateData(PAGE_DEFAULT_LIMIT, generateEntity);
 entities[0].date = 111;
 entities[1].date = 222;
 entities[2].date = 333;
@@ -50,13 +50,24 @@ const addDefaultName = (data, defaultNames) => {
   return !data.name ? addField(data, `name`, getRandomElement(defaultNames)) : data;
 };
 
+const toPage = async (cursor, skip = 0, limit = PAGE_DEFAULT_LIMIT) => {
+  const packet = await cursor.skip(skip).limit(limit).toArray();
+  return {
+    data: packet,
+    skip,
+    limit,
+    total: await cursor.count()
+  };
+};
+
 offersRouter.get(``, asyncMiddleware(async (req, res) => {
   const skip = parseInt(req.query.skip, 10) || 0;
-  const limit = parseInt(req.query.limit, 10) || DEFAULT_MAX_QUANTITY;
-  if (skip < 0 || limit < 0 || skip > limit) {
-    throw new NotFoundError(`Invalid query parameters`);
+  const limit = parseInt(req.query.limit, 10) || PAGE_DEFAULT_LIMIT;
+  if (isNaN(skip) || isNaN(limit) || limit < 0 || skip > limit) {
+    throw new IllegalArgumentError(`Skip and/or limit parameters invalid`);
   }
-  res.send(entities.slice(skip, skip + limit));
+  const {data} = await toPage(await offersRouter.offerStore.getAll(), skip, limit);
+  res.send(data);
 }));
 
 offersRouter.get(`/:date`, asyncMiddleware(async (req, res) => {
@@ -66,11 +77,11 @@ offersRouter.get(`/:date`, asyncMiddleware(async (req, res) => {
   if (isNaN(parseInt(req.params.date, 10))) {
     throw new IllegalArgumentError(`The format of date is incorrect.`);
   }
-  const entityForResponse = entities.find((it) => it.date === parseInt(req.params.date, 10));
-  if (!entityForResponse) {
+  const offerForResponse = entities.find((it) => it.date === parseInt(req.params.date, 10));
+  if (!offerForResponse) {
     throw new NotFoundError(`The entity with the date ${req.params.date} is not found`);
   }
-  res.send(entityForResponse);
+  res.send(offerForResponse);
 }));
 
 offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {
@@ -97,4 +108,7 @@ offersRouter.all(``, asyncMiddleware(async () => {
   throw new NotImplementedError(`This method is not supported`);
 }));
 
-module.exports = {offersRouter};
+module.exports = (store) => {
+  offersRouter.offerStore = store;
+  return offersRouter;
+};

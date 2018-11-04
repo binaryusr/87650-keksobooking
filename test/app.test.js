@@ -2,14 +2,16 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
+const express = require(`express`);
 
-const app = require(`../src/app`);
+const offerStoreMock = require(`./mock/offer-store-mock`);
+const offersRouter = require(`../src/offers/router`)(offerStoreMock);
 const {getFieldRequiredMessages} = require(`../src/offers/validate`);
 const {
-  isEachValueObject, generateString, removeField, isObject, areArrayValuesSame
+  isEachValueObject, generateString, removeField, isObject, areArrayValuesSame, expressErrorHandler
 } = require(`../src/utils/utils`);
 const {
-  DEFAULT_MAX_QUANTITY,
+  PAGE_DEFAULT_LIMIT,
   TITLE_MIN_LENGTH,
   TITLE_MAX_LENGTH,
   TYPES,
@@ -18,6 +20,11 @@ const {
   MAX_ROOMS,
   REQUIRED_FIELDS_ARRAY,
 } = require(`../src/utils/constants`);
+
+const app = express();
+
+app.use(`/api/offers`, offersRouter);
+app.use(expressErrorHandler);
 
 const generateValidEntity = () => {
   const location = {x: 500, y: 400};
@@ -91,14 +98,14 @@ const sendValidData = async (data) => {
 
 describe(`GET /api/offers`, () => {
   describe(`success codes`, () => {
-    it(`should respond with a json array with ${DEFAULT_MAX_QUANTITY} entities. "/api/offers"`, async () => {
+    it(`should respond with a json array with ${PAGE_DEFAULT_LIMIT} entities. "/api/offers"`, async () => {
       const res = await request(app)
         .get(`/api/offers`)
         .set(`Accept`, `application/json`)
         .expect(200)
         .expect(`Content-Type`, /json/);
       assert.strictEqual(Array.isArray(res.body), true);
-      assert.strictEqual(res.body.length, DEFAULT_MAX_QUANTITY);
+      assert.strictEqual(res.body.length, PAGE_DEFAULT_LIMIT);
     });
     it(`should respond with 5 objects in an array. "/api/offers?limit=5"`, async () => {
       const res = await request(app)
