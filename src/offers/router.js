@@ -95,10 +95,9 @@ offersRouter.get(`/:date/avatar`, asyncMiddleware(async (req, res) => {
   res.header(`Content-Type`, `image/jpg`);
   res.header(`Content-Length`, result.info.length);
   res.on(`error`, (err) => console.error(err));
-  res.on(`end`, () => res.end());
   const stream = result.stream;
   stream.on(`error`, (err) => console.error(err));
-  stream.pipe(res.end());
+  stream.pipe(res);
 }));
 
 offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {
