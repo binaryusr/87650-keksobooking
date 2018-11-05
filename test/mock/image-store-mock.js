@@ -19,7 +19,7 @@ class ImageStoreMock {
       return void 0;
     }
     return {
-      info: offers,
+      info: Object.assign(offer, {length: 640255}),
       stream: fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)
     };
   }
