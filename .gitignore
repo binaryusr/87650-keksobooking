@@ -21,3 +21,6 @@ build/
 # Папка с данными и исключение для .gitkeep
 data/*
 !data/.gitkeep
+
+# Environment variables
+.env
