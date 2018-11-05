@@ -72,4 +72,5 @@ module.exports = {
   REQUIRED_FIELDS_ARRAY: [`title`, `type`, `address`, `checkin`, `checkout`, `rooms`],
   DEFAULT_NAMES: [`Keks`, `Pavel`, `Nikolay`, `Alex`, `Ulyana`, `Anastasyia`, `Julia`],
   MONGO_URL: `mongodb://localhost:27017`,
+  SECOND_OFFER_DATE: 222,
 };

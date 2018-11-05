@@ -142,7 +142,8 @@ describe(`GET /api/offers/:date/avatar`, () => {
       await request(app)
         .get(`/api/offers/111/avatar`)
         .expect(200)
-        .expect(`Content-Type`, /jpeg|jpg|png/);
+        .expect(`Content-Type`, /jpeg|jpg|png/)
+        .expect(`Content-Length`, `640255`);
     });
   });
   describe(`error codes`, () => {

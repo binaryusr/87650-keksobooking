@@ -2,7 +2,8 @@
 
 const fs = require(`fs`);
 
-const generateFlatOffers = require(`../data/flat-offers`);
+const {SECOND_OFFER_DATE} = require(`../../src/utils/constants`);
+const generateFlatOffers = require(`../data/generate-flat-offers`);
 
 class ImageStoreMock {
   async getBucketAvatar() {}
@@ -12,7 +13,7 @@ class ImageStoreMock {
   async getAvatar(offerId) {
     const offers = generateFlatOffers();
     const offer = offers.find((it) => parseInt(it.date, 10) === offerId);
-    if (offerId === 222) {
+    if (offerId === SECOND_OFFER_DATE) {
       return void 0;
     }
     if (!offer) {
