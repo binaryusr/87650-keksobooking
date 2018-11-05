@@ -88,7 +88,7 @@ offersRouter.get(`/:date/avatar`, asyncMiddleware(async (req, res) => {
   if (!offer) {
     throw new NotFoundError(`The offer with the date: ${date} is not found`);
   }
-  const result = await offersRouter.imageStore.getAvatar(offer.avatar);
+  const result = await offersRouter.imageStore.getAvatar(offer._id);
   if (!result) {
     throw new NotFoundError(`Avatar is not found`);
   }

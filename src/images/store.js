@@ -32,41 +32,37 @@ class ImageStore {
     return this._bucketPreview;
   }
 
-  async getAvatar(filename) {
-    console.log(filename, `FILENAME`);
+  async getAvatar(offerId) {
     const bucket = await this.getBucketAvatar();
-    console.log(bucket, `BUCKET`);
-    const results = await (bucket).find({filename}).toArray();
-    console.log(results, `RESULTS`);
+    const results = await (bucket).find({filename: offerId}).toArray();
     const entry = results[0];
-    console.log(entry, `ENTRY`);
     if (!entry) {
       return void 0;
     }
-    return {info: entry, stream: bucket.openDownloadStreamByName(filename)};
+    return {info: entry, stream: bucket.openDownloadStreamByName(offerId)};
   }
 
-  async getPreview(filename) {
+  async getPreview(offerId) {
     const bucket = await this.getBucketPreview();
-    const results = await (bucket).find({filename}).toArray();
+    const results = await (bucket).find({filename: offerId}).toArray();
     const entry = results[0];
     if (!entry) {
       return void 0;
     }
-    return {info: entry, stream: bucket.openDownloadStreamByName(filename)};
+    return {info: entry, stream: bucket.openDownloadStreamByName(offerId)};
   }
 
-  async saveAvatar(filename, stream) {
+  async saveAvatar(id, stream) {
     const bucket = await this.getBucketAvatar();
     return new Promise((res, rej) => {
-      stream.pipe(bucket.openUploadStream(filename)).on(`error`, rej).on(`finish`, res);
+      stream.pipe(bucket.openUploadStream(id)).on(`error`, rej).on(`finish`, res);
     });
   }
 
-  async savePreview(filename, stream) {
+  async savePreview(id, stream) {
     const bucket = await this.getBucketPreview();
     return new Promise((res, rej) => {
-      stream.pipe(bucket.openUploadStream(filename)).on(`error`, rej).on(`finish`, res);
+      stream.pipe(bucket.openUploadStream(id)).on(`error`, rej).on(`finish`, res);
     });
   }
 }
