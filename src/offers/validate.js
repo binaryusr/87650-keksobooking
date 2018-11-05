@@ -1,6 +1,6 @@
 'use strict';
 
-const ValidationError = require(`./error/validation-error`);
+const ValidationError = require(`../errors/validation-error`);
 const {
   REQUIRED_FIELDS_ARRAY,
   TITLE_MIN_LENGTH,
@@ -15,8 +15,8 @@ const {
   DEFAULT_NAMES,
   MIN_GUESTS,
   MAX_GUESTS,
-} = require(`./utils/constants`);
-const {isInRangeInclusive, isSubset, buildCoordinates} = require(`./utils/utils`);
+} = require(`../utils/constants`);
+const {isInRangeInclusive, isSubset, buildCoordinates} = require(`../utils/utils`);
 
 const getFieldRequiredMessages = (data, requiredFields) => requiredFields.reduce((acc, it) => {
   if (typeof data[it] === `undefined`) {
@@ -113,14 +113,6 @@ const isDescriptionValid = (descriptionField) => {
   return typeof descriptionField === `string`;
 };
 
-const isJpgOrPng = () => {
-  return true;
-};
-
-const isFieldValid = () => {
-  return false;
-};
-
 const getFieldInfo = (fieldName, fieldValue) => {
   const fields = {
     name: {
@@ -180,19 +172,19 @@ const getFieldInfo = (fieldName, fieldValue) => {
     },
     avatar: {
       fieldName: `avatar`,
-      isValid: isJpgOrPng,
+      isValid: () => true,
       errorMessage: `Avatar must be an image in jpg or png format`,
     },
     preview: {
       fieldName: `preview`,
-      isValid: isJpgOrPng,
+      isValid: () => true,
       errorMessage: `Preview must be an image in jpg or png format`,
     },
   };
   if (!fields[fieldName]) {
     return {
       fieldName: `${fieldName}`,
-      isValid: isFieldValid,
+      isValid: () => false,
       errorMessage: `${fieldName} is unknown`,
     };
   }

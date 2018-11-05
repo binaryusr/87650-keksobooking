@@ -23,10 +23,15 @@ const Message = {
   WRONG_TYPE_NUMBER: `Please type a number!`
 };
 
+const DbName = {
+  KEKSOBOOKING: `keksobooking`,
+};
+
 module.exports = {
   Command,
   Question,
   Message,
+  DbName,
   TITLE: [
     `Большая уютная квартира`, `Маленькая неуютная квартира`, `Огромный прекрасный дворец`,
     `Маленький ужасный дворец`, `Красивый гостевой домик`, `Некрасивый негостеприимный домик`,
@@ -60,10 +65,12 @@ module.exports = {
   ENTITY_FILE_DEFAULT_PATH: `${process.cwd()}/data.json`,
   DEFAULT_PORT: 8080,
   HOSTNAME: `127.0.0.1`,
-  DEFAULT_MAX_QUANTITY: 20,
+  PAGE_DEFAULT_LIMIT: 20,
   TITLE_MIN_LENGTH: 25,
   TITLE_MAX_LENGTH: 140,
   ADDRESS_MAX_LENGTH: 140,
   REQUIRED_FIELDS_ARRAY: [`title`, `type`, `address`, `checkin`, `checkout`, `rooms`],
   DEFAULT_NAMES: [`Keks`, `Pavel`, `Nikolay`, `Alex`, `Ulyana`, `Anastasyia`, `Julia`],
+  MONGO_URL: `mongodb://localhost:27017`,
+  SECOND_OFFER_DATE: 222,
 };

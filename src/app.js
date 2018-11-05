@@ -2,24 +2,17 @@
 
 const express = require(`express`);
 
-const {offersRouter} = require(`./routers`);
+const offerStore = require(`./offers/store`);
+const imageStore = require(`./images/store`);
+const offersRouter = require(`./offers/router`)(offerStore, imageStore);
+const {expressErrorHandler} = require(`./utils/utils`);
 
 const app = express();
-
-const errorHandler = (err, req, res, _next) => {
-  if (err) {
-    console.error(err.stack);
-    if (err.code === 400) {
-      res.status(err.code).json(err.message);
-    }
-    res.status(err.code || 500).send(err.message);
-  }
-};
 
 app.use(express.static(`${process.cwd()}/static`));
 
 app.use(`/api/offers`, offersRouter);
 
-app.use(errorHandler);
+app.use(expressErrorHandler);
 
 module.exports = app;

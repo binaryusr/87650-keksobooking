@@ -1,5 +1,8 @@
 'use strict';
 
+const {MongoError} = require(`mongodb`);
+
+const ValidationError = require(`../errors/validation-error`);
 const {
   MS_PER_SECOND,
   SECONDS_PER_MINUTE,
@@ -44,7 +47,7 @@ const isCorrectPrimitiveType = (value, type, errMessage) => {
   }
 };
 
-const makeAsync = (fn) => (req, res, next) => fn(req, res, next).catch(next);
+const asyncMiddleware = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 const generateData = (number, fn) => [...Array(number)].map(() => fn());
 
@@ -93,6 +96,22 @@ const buildCoordinates = (addressField) => {
   return {x, y};
 };
 
+const expressErrorHandler = (err, req, res, _next) => {
+  if (err) {
+    console.error(err);
+    if (err instanceof ValidationError) {
+      res.status(err.code).json(err.errors);
+    }
+    if (err instanceof MongoError) {
+      res.status(400).json(err.message);
+    }
+    if (err.code === 400) {
+      res.status(err.code).json(err.message);
+    }
+    res.status(err.code || 500).send(err.message);
+  }
+};
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -103,7 +122,7 @@ module.exports = {
   isYes,
   isNo,
   isCorrectPrimitiveType,
-  makeAsync,
+  asyncMiddleware,
   generateData,
   isObject,
   isEachValueObject,
@@ -113,4 +132,5 @@ module.exports = {
   removeField,
   areArrayValuesSame,
   buildCoordinates,
+  expressErrorHandler,
 };
