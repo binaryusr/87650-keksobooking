@@ -4,6 +4,7 @@ const request = require(`supertest`);
 const assert = require(`assert`);
 const express = require(`express`);
 
+const generateFlatEntity = require(`./data/generate-flat-entity`);
 const offerStoreMock = require(`./mock/offer-store-mock`);
 const ImageStoreMock = require(`./mock/image-store-mock`);
 const offersRouter = require(`../src/offers/router`)(offerStoreMock, ImageStoreMock);
@@ -27,59 +28,6 @@ const app = express();
 app.use(`/api/offers`, offersRouter);
 app.use(expressErrorHandler);
 
-const generateValidEntity = () => {
-  const location = {x: 500, y: 400};
-  return {
-    author: {
-      name: `Anna Bolina`,
-      avatar: `test/fixtures/keks.png`,
-    },
-    offer: {
-      title: `Уютное бунгало далеко от моря`,
-      address: `${location.x}, ${location.y}`,
-      price: 1010,
-      type: `flat`,
-      rooms: 4,
-      guests: 4,
-      checkin: `09:00`,
-      checkout: `11:00`,
-      features: [`wifi`, `parking`, `elevator`, `conditioner`],
-      description: `Big and cozy apartment in the center of the city`,
-      photos: [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`],
-      preview: `test/fixtures/keks.png`,
-    },
-    location: {
-      x: location.x,
-      y: location.y,
-    },
-    date: 111
-  };
-};
-
-const generateFlatEntity = (fieldsToRemoveArray = [], newFields) => {
-  const testEntity = generateValidEntity();
-  let fields = {
-    name: testEntity.author.name,
-    price: testEntity.offer.price,
-    title: testEntity.offer.title,
-    address: testEntity.offer.address,
-    type: testEntity.offer.type,
-    rooms: testEntity.offer.rooms,
-    guests: testEntity.offer.guests,
-    checkin: testEntity.offer.checkin,
-    checkout: testEntity.offer.checkout,
-    features: testEntity.offer.features,
-    description: testEntity.offer.description,
-    location: testEntity.location,
-    date: testEntity.date,
-  };
-  if (newFields && Object.keys(newFields).length !== 0 && newFields.constructor === Object) {
-    fields = Object.assign(fields, newFields);
-  }
-  fieldsToRemoveArray.forEach((it) => delete fields[it]);
-  return fields;
-};
-
 const sendInvalidData = async (data) => {
   return request(app)
     .post(`/api/offers`)
@@ -99,7 +47,7 @@ const sendValidData = async (data) => {
 
 describe(`GET /api/offers`, () => {
   describe(`success codes`, () => {
-    it(`should respond with a json array with ${PAGE_DEFAULT_LIMIT} entities. "/api/offers"`, async () => {
+    it(`should respond with a json array with ${PAGE_DEFAULT_LIMIT} entities`, async () => {
       const res = await request(app)
         .get(`/api/offers`)
         .set(`Accept`, `application/json`)
@@ -146,29 +94,12 @@ describe(`GET /api/offers`, () => {
       assert.strictEqual(res.body[0].date, 444);
       assert.strictEqual(res.body[5].date, 999);
     });
-    it(`should respond with an object containing correct date param. "/api/offers/:date"`, async () => {
-      const res = await request(app)
-        .get(`/api/offers/111`)
-        .set(`Accept`, `application/json`)
-        .expect(200)
-        .expect(`Content-Type`, /json/);
-      assert.strictEqual(typeof res.body, `object`);
-      assert.strictEqual(Array.isArray(res.body), false);
-      assert.notStrictEqual(res.body, null);
-      assert.strictEqual(res.body.date, 111);
-    });
   });
   describe(`error codes`, () => {
     it(`should respond with the 404 by invalid pathname. "/api/blahblah"`, async () => {
       await request(app)
         .get(`/api/blahblah`)
         .set(`Accept`, `application/json`)
-        .expect(404)
-        .expect(`Content-Type`, /text\/html/);
-    });
-    it(`should respond with the status 404 if no offer found for the provided date. "/api/offers/:date"`, async () => {
-      await request(app)
-        .get(`/api/offers/54321`)
         .expect(404)
         .expect(`Content-Type`, /text\/html/);
     });
@@ -181,30 +112,58 @@ describe(`GET /api/offers`, () => {
   });
 });
 
+describe(`GET /api/offers/:date`, () => {
+  describe(`200 codes`, () => {
+    it(`should respond with an object containing correct date param`, async () => {
+      const res = await request(app)
+        .get(`/api/offers/111`)
+        .set(`Accept`, `application/json`)
+        .expect(200)
+        .expect(`Content-Type`, /json/);
+      assert.strictEqual(typeof res.body, `object`);
+      assert.strictEqual(Array.isArray(res.body), false);
+      assert.notStrictEqual(res.body, null);
+      assert.strictEqual(res.body.date, 111);
+    });
+  });
+  describe(`error codes`, () => {
+    it(`should respond with the status 404 if no offer found for the provided date`, async () => {
+      await request(app)
+        .get(`/api/offers/54321`)
+        .expect(404)
+        .expect(`Content-Type`, /text\/html/);
+    });
+  });
+});
+
 describe(`GET /api/offers/:date/avatar`, () => {
-  it(`should respond with the avatar if the offer with the specified date is found. "/offers/111/avatar"`, async () => {
-    await request(app)
-      .get(`/api/offers/111/avatar`)
-      .expect(200)
-      .expect(`Content-Type`, /jpeg|jpg|png/);
+  describe(`200 codes`, () => {
+    it(`should respond with the avatar if the offer with the specified date is found. "/offers/111/avatar"`, async () => {
+      await request(app)
+        .get(`/api/offers/111/avatar`)
+        .expect(200)
+        .expect(`Content-Type`, /jpeg|jpg|png/);
+    });
   });
-  it(`should respond with 404 if there is no specified offer. "/offers/0/avatar"`, async () => {
-    await request(app)
-      .get(`/api/offers/0/avatar`)
-      .expect(404)
-      .expect(`Content-Type`, /text\/html/);
-  });
-  it(`should respond with 404 if the offer doesn't have avatar. "/offers/222/avatar"`, async () => {
-    await request(app)
-      .get(`/api/offers/222/avatar`)
-      .expect(404)
-      .expect(`Content-Type`, /text\/html/);
+  describe(`error codes`, () => {
+    it(`should respond with 404 if there is no specified offer. "/offers/0/avatar"`, async () => {
+      await request(app)
+        .get(`/api/offers/0/avatar`)
+        .expect(404)
+        .expect(`Content-Type`, /text\/html/);
+    });
+    it(`should respond with 404 if the offer doesn't have avatar. "/offers/222/avatar"`, async () => {
+      await request(app)
+        .get(`/api/offers/222/avatar`)
+        .expect(404)
+        .expect(`Content-Type`, /text\/html/);
+    });
   });
 });
 
 describe(`POST /api/offers`, () => {
   describe(`ok requests`, () => {
-    const entity = generateFlatEntity([`date`, `location`]);
+    const entity = generateFlatEntity([`date`]);
     it(`should respond to application/json format by default with application/json`, async () => {
       await sendValidData(entity);
     });
@@ -240,9 +199,8 @@ describe(`POST /api/offers`, () => {
       assert.deepStrictEqual(isObject(res.body.location), true);
     });
   });
-
   describe(`error 400 for invalid fields`, () => {
-    const fieldsToRemove = [`date`, `location`, `avatar`, `preview`];
+    const fieldsToRemove = [`date`, `avatar`, `preview`];
     it(`should send 400 if one or more of the required fields are missing`, async () => {
       const errorMessages = getFieldRequiredMessages({}, REQUIRED_FIELDS_ARRAY);
       const res = await sendInvalidData({});

@@ -22,7 +22,11 @@ class OfferStoreMock {
   }
 
   async getOne(date) {
-    return this.data.find((it) => parseInt(it.date, 10) === date);
+    const offer = this.data.find((it) => parseInt(it.date, 10) === date);
+    if (offer) {
+      return Object.assign(offer, {"_id": offer.date});
+    }
+    return void 0;
   }
 
   async getAll() {
