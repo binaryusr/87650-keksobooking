@@ -88,7 +88,7 @@ offersRouter.get(`/:date/avatar`, asyncMiddleware(async (req, res) => {
   if (!offer) {
     throw new NotFoundError(`The offer with the date: ${date} is not found`);
   }
-  const result = await offersRouter.imageStore.getAvatar(offer.date);
+  const result = await offersRouter.imageStore.getAvatar(offer.avatar);
   if (!result) {
     throw new NotFoundError(`Avatar is not found`);
   }
@@ -110,7 +110,7 @@ offersRouter.post(``, jsonParser, upload, asyncMiddleware(async (req, res) => {
     }
   }
   const dataWithName = addDefaultName(req.body, DEFAULT_NAMES);
-  const data = castFieldsToNumber(dataWithName, [`price`, `rooms`, `guests`]);
+  const data = castFieldsToNumber(dataWithName, [`price`, `rooms`, `guests`, `date`]);
   validateFields(data);
   const dataWithLocation = addField(data, `location`, buildCoordinates(req.body.address));
   const result = await offersRouter.offerStore.saveOne(dataWithLocation);

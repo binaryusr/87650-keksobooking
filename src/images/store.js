@@ -5,7 +5,7 @@ const db = require(`../db`);
 
 class ImageStore {
   async getBucketAvatar() {
-    if (!this._bucketAvatar) {
+    if (this._bucketAvatar) {
       return this._bucketAvatar;
     }
     const dBase = await db;
@@ -19,7 +19,7 @@ class ImageStore {
   }
 
   async getBucketPreview() {
-    if (!this._bucketPreview) {
+    if (this._bucketPreview) {
       return this._bucketPreview;
     }
     const dBase = await db;
@@ -32,37 +32,41 @@ class ImageStore {
     return this._bucketPreview;
   }
 
-  async getAvatar(date) {
+  async getAvatar(filename) {
+    console.log(filename, `FILENAME`);
     const bucket = await this.getBucketAvatar();
-    const results = await (bucket).find({date}).toArray();
+    console.log(bucket, `BUCKET`);
+    const results = await (bucket).find({filename}).toArray();
+    console.log(results, `RESULTS`);
     const entry = results[0];
+    console.log(entry, `ENTRY`);
     if (!entry) {
-      return undefined;
+      return void 0;
     }
-    return {info: entry, stream: bucket.openDownloadStreamByName(date)};
+    return {info: entry, stream: bucket.openDownloadStreamByName(filename)};
   }
 
-  async getPreview(date) {
+  async getPreview(filename) {
     const bucket = await this.getBucketPreview();
-    const results = await (bucket).find({date}).toArray();
+    const results = await (bucket).find({filename}).toArray();
     const entry = results[0];
     if (!entry) {
-      return undefined;
+      return void 0;
     }
-    return {info: entry, stream: bucket.openDownloadStreamByName(date)};
+    return {info: entry, stream: bucket.openDownloadStreamByName(filename)};
   }
 
-  async saveAvatar(date, stream) {
+  async saveAvatar(filename, stream) {
     const bucket = await this.getBucketAvatar();
     return new Promise((res, rej) => {
-      stream.pipe(bucket.openUploadStream(date)).on(`error`, rej).on(`finish`, res);
+      stream.pipe(bucket.openUploadStream(filename)).on(`error`, rej).on(`finish`, res);
     });
   }
 
-  async savePreview(date, stream) {
+  async savePreview(filename, stream) {
     const bucket = await this.getBucketPreview();
     return new Promise((res, rej) => {
-      stream.pipe(bucket.openUploadStream(date)).on(`error`, rej).on(`finish`, res);
+      stream.pipe(bucket.openUploadStream(filename)).on(`error`, rej).on(`finish`, res);
     });
   }
 }
