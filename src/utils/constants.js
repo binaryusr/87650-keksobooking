@@ -7,6 +7,7 @@ const Command = {
   LICENSE: `--license`,
   SERVER: `--server`,
   DESCRIPTION: `--description`,
+  FILL: `--fill`,
   NO_COMMAND: `no-command`,
 };
 

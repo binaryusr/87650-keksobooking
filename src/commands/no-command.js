@@ -7,6 +7,7 @@ const util = require(`util`);
 
 const packageInfo = require(`../../package.json`);
 const utils = require(`../utils/utils`);
+const logger = require(`../logger`);
 const {ENTITY_FILE_DEFAULT_PATH, Question, Message} = require(`../utils/constants`);
 const generateEntity = require(`../generate-entity`);
 
@@ -108,7 +109,7 @@ ${colors.grey(`Author`)}: ${colors.green(packageInfo.author)}`);
     try {
       await runFileCreation();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       process.exit(1);
     }
   }

@@ -2,6 +2,7 @@
 
 const {MongoError} = require(`mongodb`);
 
+const logger = require(`../logger`);
 const ValidationError = require(`../errors/validation-error`);
 const {
   MS_PER_SECOND,
@@ -98,7 +99,7 @@ const buildCoordinates = (addressField) => {
 
 const expressErrorHandler = (err, req, res, _next) => {
   if (err) {
-    console.error(err);
+    logger.error(err);
     if (err instanceof ValidationError) {
       res.status(err.code).json(err.errors);
     }

@@ -2,6 +2,7 @@
 
 require(`dotenv`).config();
 const execute = require(`./src/execute`);
+const logger = require(`./src/logger`);
 
 if (process.env.NODE_ENV !== `production`) {
   console.log(`Database host address:`, process.env.DB_HOST);
@@ -15,6 +16,6 @@ const args = process.argv.slice(2);
 try {
   execute(args[0]);
 } catch (err) {
-  console.error(err);
+  logger.error(err);
   process.exit(1);
 }
