@@ -15,15 +15,17 @@ module.exports = {
     const data = generateTestOffersStandard();
     try {
       await offersStore.saveMany(data);
-      Promise.all(data.map((it) => {
+      await Promise.all(data.map(async (it) => {
+        const dateAsInt = parseInt(it.date, 10);
+        const offer = await offersStore.getOne(dateAsInt);
         const promises = [];
         if (it.author.avatar) {
-          promises.push(ImageStore.saveAvatar(it.date, fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
+          promises.push(ImageStore.saveAvatar(offer._id, fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
         }
         if (it.offer.preview) {
-          promises.push(ImageStore.savePreview(it.date, fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
+          promises.push(ImageStore.savePreview(offer._id, fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
         }
-        return Promise.all(promises);
+        return await Promise.all(promises);
       }));
       logger.info(`Test data generated successfully.`);
       process.exit(0);
