@@ -5,6 +5,7 @@ const multer = require(`multer`);
 const path = require(`path`);
 const toStream = require(`buffer-to-stream`);
 
+const logger = require(`../logger`);
 const {validateFields} = require(`./validate`);
 const ValidationError = require(`../errors/validation-error`);
 const NotFoundError = require(`../errors/not-found-error`);
@@ -94,9 +95,9 @@ offersRouter.get(`/:date/avatar`, asyncMiddleware(async (req, res) => {
   }
   res.header(`Content-Type`, `image/jpg`);
   res.header(`Content-Length`, result.info.length);
-  res.on(`error`, (err) => console.error(err));
+  res.on(`error`, (err) => logger.error(err));
   const stream = result.stream;
-  stream.on(`error`, (err) => console.error(err));
+  stream.on(`error`, (err) => logger.error(err));
   stream.pipe(res);
 }));
 

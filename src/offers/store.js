@@ -25,6 +25,10 @@ class OfferStore {
   async saveOne(entity) {
     return (await this.collection).insertOne(entity);
   }
+
+  async saveMany(entities) {
+    return (await this.collection).insertMany(entities);
+  }
 }
 
 module.exports = new OfferStore(setupCollection(`offers`).catch((err) => {

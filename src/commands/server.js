@@ -3,7 +3,7 @@
 const colors = require(`colors/safe`);
 
 const app = require(`../app`);
-const {Command, DEFAULT_PORT, HOSTNAME} = require(`../utils/constants`);
+const {Command} = require(`../utils/constants`);
 
 const getValidPort = (typedArgs, defaultPort) => {
   const customPort = typedArgs.reduce((acc, it, i) => {
@@ -19,9 +19,9 @@ const getValidPort = (typedArgs, defaultPort) => {
 
 module.exports = {
   name: `server`,
-  description: `Starts a server on the specified port. The default port is ${colors.blue(DEFAULT_PORT)}`,
+  description: `Starts a server on the specified port. The default port is ${colors.blue(process.env.SERVER_PORT)}`,
   execute() {
-    const port = getValidPort(process.argv, DEFAULT_PORT);
-    app.listen(port, () => console.log(`Server running at http://${HOSTNAME}:${port}/`));
+    const port = getValidPort(process.argv, process.env.SERVER_PORT);
+    app.listen(port, () => console.log(`Server running at http://${process.env.SERVER_HOST}:${port}/`));
   }
 };

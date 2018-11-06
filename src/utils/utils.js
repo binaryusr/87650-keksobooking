@@ -2,6 +2,7 @@
 
 const {MongoError} = require(`mongodb`);
 
+const logger = require(`../logger`);
 const ValidationError = require(`../errors/validation-error`);
 const {
   MS_PER_SECOND,
@@ -98,7 +99,7 @@ const buildCoordinates = (addressField) => {
 
 const expressErrorHandler = (err, req, res, _next) => {
   if (err) {
-    console.error(err);
+    logger.error(err);
     if (err instanceof ValidationError) {
       res.status(err.code).json(err.errors);
     }
@@ -110,6 +111,12 @@ const expressErrorHandler = (err, req, res, _next) => {
     }
     res.status(err.code || 500).send(err.message);
   }
+};
+
+const CORSHandler = (req, res, _next) => {
+  res.header(`Access-Control-Allow-Origin`, `*`);
+  res.header(`Access-Control-Allow-Headers`, `Origin, X-Requested-With, Content-Type, Accept`);
+  _next();
 };
 
 module.exports = {
@@ -133,4 +140,5 @@ module.exports = {
   areArrayValuesSame,
   buildCoordinates,
   expressErrorHandler,
+  CORSHandler,
 };
