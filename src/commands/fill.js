@@ -23,7 +23,7 @@ module.exports = {
         if (it.offer.preview) {
           promises.push(ImageStore.savePreview(insertedIds[i], fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
         }
-        return await Promise.all(promises);
+        return Promise.all(promises);
       }));
       logger.info(`Test data generated successfully.`);
       process.exit(0);
