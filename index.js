@@ -1,6 +1,7 @@
 'use strict';
 
 require(`dotenv`).config();
+const execute = require(`./src/execute`);
 
 if (process.env.NODE_ENV !== `production`) {
   console.log(`Database host address:`, process.env.DB_HOST);
@@ -9,7 +10,6 @@ if (process.env.NODE_ENV !== `production`) {
   console.log(`Server log level:`, process.env.SERVER_LOG_LEVEL);
 }
 
-const execute = require(`./src/execute`);
 const args = process.argv.slice(2);
 
 try {

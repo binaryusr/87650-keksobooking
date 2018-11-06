@@ -112,6 +112,12 @@ const expressErrorHandler = (err, req, res, _next) => {
   }
 };
 
+const CORSHandler = (req, res, _next) => {
+  res.header(`Access-Control-Allow-Origin`, `*`);
+  res.header(`Access-Control-Allow-Headers`, `Origin, X-Requested-With, Content-Type, Accept`);
+  _next();
+};
+
 module.exports = {
   getRandomElement,
   getRandomNumberRounded,
@@ -133,4 +139,5 @@ module.exports = {
   areArrayValuesSame,
   buildCoordinates,
   expressErrorHandler,
+  CORSHandler,
 };

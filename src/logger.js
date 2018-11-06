@@ -9,7 +9,7 @@ const logger = createLogger({
   format: format.json(),
   transports: [
     new transports.File({filename: `errors.log`, level: `error`}),
-    new transports.File({filename: `combined.log`, level: `info`}),
+    new transports.File({filename: `combined.log`, level: `silly`}),
   ]
 });
 
