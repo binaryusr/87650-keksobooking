@@ -14,16 +14,14 @@ module.exports = {
   async execute() {
     const data = generateTestOffersStandard();
     try {
-      await offersStore.saveMany(data);
-      await Promise.all(data.map(async (it) => {
-        const dateAsInt = parseInt(it.date, 10);
-        const offer = await offersStore.getOne(dateAsInt);
+      const {insertedIds} = await offersStore.saveMany(data);
+      await Promise.all(data.map(async (it, i) => {
         const promises = [];
         if (it.author.avatar) {
-          promises.push(ImageStore.saveAvatar(offer._id, fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
+          promises.push(ImageStore.saveAvatar(insertedIds[i], fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
         }
         if (it.offer.preview) {
-          promises.push(ImageStore.savePreview(offer._id, fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
+          promises.push(ImageStore.savePreview(insertedIds[i], fs.createReadStream(`${process.cwd()}/test/fixtures/keks.png`)));
         }
         return await Promise.all(promises);
       }));
